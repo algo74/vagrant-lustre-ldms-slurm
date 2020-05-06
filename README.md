@@ -1,3 +1,37 @@
+=====================================
+||    Addition by Alex G
+=====================================
+
+-----------
+Description
+-----------
+
+In addition to the Lustre servers, installs a cluster of clients
+
+
+-------------------
+Lustre CLI examples
+-------------------
+
+Create new directory: 
+ sudo mkdir /lustre/all
+ sudo chmod 777 /lustre/all
+ sudo lfs setstripe -c 2 /lustre/all
+
+Check if Lustre is mounted:
+ ls /proc/fs/lustre/llite
+
+Make/remove a file
+ dd if=/dev/zero of=/lustre/all/testfile bs=1M count=512
+ rm -f /lustre/all/testfile
+
+Check disk usage
+ lfs df -h
+
+=====================================
+||    Original info
+=====================================
+
 -----------
 Description
 -----------
