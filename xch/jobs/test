@@ -1,0 +1,5 @@
+#!/bin/sh
+#SBATCH --time=2
+#SBATCH --output=/lustre/out/slurm-%j.out
+srun -n 1 sleep 30 
+

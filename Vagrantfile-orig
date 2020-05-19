@@ -9,18 +9,18 @@ Vagrant.configure(2) do |config|
     mds01.vm.synced_folder ".", "/vagrant", disabled: true
     mds01.vm.network "private_network", ip: "10.0.4.6"
     mds01.vm.provider "virtualbox" do |v|
-      v.memory = 512  # lustre is greedy and segfaults with small RAM
+      v.memory = 256  # lustre is greedy and segfaults with small RAM
       # https://jira.hpdd.intel.com/browse/LU-5697
       v.cpus = 1
     end
     mds01.vm.provider "virtualbox" do |vb|
       if !File.exist?("mgt01.vdi")
-        vb.customize ["createhd", "--filename", "mgt01.vdi", "--size", 1024, "--variant", "Fixed"]
+        vb.customize ["createhd", "--filename", "mgt01.vdi", "--size", 64, "--variant", "Fixed"]
         vb.customize ["modifyhd", "mgt01.vdi", "--type", "shareable"]
       end
       vb.customize ["storageattach", :id, "--storagectl", "IDE Controller", "--port", 0, "--device", 1, "--type", "hdd", "--medium", "mgt01.vdi"]
       if !File.exist?("mdt01.vdi")
-        vb.customize ["createhd", "--filename", "mdt01.vdi", "--size", 1024, "--variant", "Fixed"]
+        vb.customize ["createhd", "--filename", "mdt01.vdi", "--size", 128, "--variant", "Fixed"]
         vb.customize ["modifyhd", "mdt01.vdi", "--type", "shareable"]
       end
       vb.customize ["storageattach", :id, "--storagectl", "IDE Controller", "--port", 1, "--device", 0, "--type", "hdd", "--medium", "mdt01.vdi"]
@@ -34,18 +34,18 @@ Vagrant.configure(2) do |config|
     mds02.vm.synced_folder ".", "/vagrant", disabled: true
     mds02.vm.network "private_network", ip: "10.0.4.7"
     mds02.vm.provider "virtualbox" do |v|
-      v.memory = 512  # lustre is greedy and segfaults with small RAM
+      v.memory = 256  # lustre is greedy and segfaults with small RAM
       # https://jira.hpdd.intel.com/browse/LU-5679
       v.cpus = 1
     end
     mds02.vm.provider "virtualbox" do |vb|
       if !File.exist?("mgt01.vdi")
-        vb.customize ["createhd", "--filename", "mgt01.vdi", "--size", 1024, "--variant", "Fixed"]
+        vb.customize ["createhd", "--filename", "mgt01.vdi", "--size", 64, "--variant", "Fixed"]
         vb.customize ["modifyhd", "mgt01.vdi", "--type", "shareable"]
       end
       vb.customize ["storageattach", :id, "--storagectl", "IDE Controller", "--port", 0, "--device", 1, "--type", "hdd", "--medium", "mgt01.vdi"]
       if !File.exist?("mdt01.vdi")
-        vb.customize ["createhd", "--filename", "mdt01.vdi", "--size", 1024, "--variant", "Fixed"]
+        vb.customize ["createhd", "--filename", "mdt01.vdi", "--size", 128, "--variant", "Fixed"]
         vb.customize ["modifyhd", "mdt01.vdi", "--type", "shareable"]
       end
       vb.customize ["storageattach", :id, "--storagectl", "IDE Controller", "--port", 1, "--device", 0, "--type", "hdd", "--medium", "mdt01.vdi"]
@@ -59,18 +59,18 @@ Vagrant.configure(2) do |config|
     oss01.vm.synced_folder ".", "/vagrant", disabled: true
     oss01.vm.network "private_network", ip: "10.0.4.8"
     oss01.vm.provider "virtualbox" do |v|
-      v.memory = 512  # lustre is greedy and segfaults with small RAM
+      v.memory = 256  # lustre is greedy and segfaults with small RAM
       # https://jira.hpdd.intel.com/browse/LU-5697
       v.cpus = 1
     end
     oss01.vm.provider "virtualbox" do |vb|
       if !File.exist?("ost01.vdi")
-        vb.customize ["createhd", "--filename", "ost01.vdi", "--size", 8192, "--variant", "Fixed"]
+        vb.customize ["createhd", "--filename", "ost01.vdi", "--size", 768, "--variant", "Fixed"]
         vb.customize ["modifyhd", "ost01.vdi", "--type", "shareable"]
       end
       vb.customize ["storageattach", :id, "--storagectl", "IDE Controller", "--port", 1, "--device", 0, "--type", "hdd", "--medium", "ost01.vdi"]
       if !File.exist?("ost02.vdi")
-        vb.customize ["createhd", "--filename", "ost02.vdi", "--size", 8192, "--variant", "Fixed"]
+        vb.customize ["createhd", "--filename", "ost02.vdi", "--size", 768, "--variant", "Fixed"]
         vb.customize ["modifyhd", "ost02.vdi", "--type", "shareable"]
       end
       vb.customize ["storageattach", :id, "--storagectl", "IDE Controller", "--port", 1, "--device", 1, "--type", "hdd", "--medium", "ost02.vdi"]
@@ -84,42 +84,66 @@ Vagrant.configure(2) do |config|
     oss02.vm.synced_folder ".", "/vagrant", disabled: true
     oss02.vm.network "private_network", ip: "10.0.4.9"
     oss02.vm.provider "virtualbox" do |v|
-      v.memory = 512  # lustre is greedy and segfaults with small RAM
+      v.memory = 256  # lustre is greedy and segfaults with small RAM
       # https://jira.hpdd.intel.com/browse/LU-5697
       v.cpus = 1
     end
     oss02.vm.provider "virtualbox" do |vb|
       if !File.exist?("ost01.vdi")
-        vb.customize ["createhd", "--filename", "ost01.vdi", "--size", 8192, "--variant", "Fixed"]
+        vb.customize ["createhd", "--filename", "ost01.vdi", "--size", 768, "--variant", "Fixed"]
         vb.customize ["modifyhd", "ost01.vdi", "--type", "shareable"]
       end
       vb.customize ["storageattach", :id, "--storagectl", "IDE Controller", "--port", 1, "--device", 0, "--type", "hdd", "--medium", "ost01.vdi"]
       if !File.exist?("ost02.vdi")
-        vb.customize ["createhd", "--filename", "ost02.vdi", "--size", 8192, "--variant", "Fixed"]
+        vb.customize ["createhd", "--filename", "ost02.vdi", "--size", 768, "--variant", "Fixed"]
         vb.customize ["modifyhd", "ost02.vdi", "--type", "shareable"]
       end
       vb.customize ["storageattach", :id, "--storagectl", "IDE Controller", "--port", 1, "--device", 1, "--type", "hdd", "--medium", "ost02.vdi"]
     end
   end
-  
-
-  # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  # client client
-  (0..8).each do |c_idx|
-    config.vm.define "cl#{c_idx}" do |client|
-      client.vm.box = "basenode"
-      client.vm.box_url = '~/vc/basenode/basenode'
-      client.vm.synced_folder "xch", "/xch"
-      client.vm.network "private_network", ip: "10.0.4.5#{c_idx}"
-      client.vm.provider "virtualbox" do |v|
-        v.memory = 1024
-        v.cpus = 1
-      end
+  # centos6 client
+  config.vm.define "centos6" do |centos6|
+    centos6.vm.box = "puppetlabs/centos-6.6-64-nocm"
+    centos6.vm.box_url = 'puppetlabs/centos-6.6-64-nocm'
+    # installing new kernel removes virtualbox guest additions
+    centos6.vm.synced_folder ".", "/vagrant", disabled: true
+    centos6.vm.network "private_network", ip: "10.0.4.20"
+    centos6.vm.provider "virtualbox" do |v|
+      v.memory = 256  # mount.lustre: mount mds01@tcp0:mds02@tcp0:/testfs at /lustre failed: Cannot allocate memory
+      v.cpus = 1
     end
   end
-  # =====================================================================================================
-
-  
+  # centos6 lustre 1.8 client
+  config.vm.define "centos6_lustre18" do |centos6_lustre18|
+    centos6_lustre18.vm.box = "puppetlabs/centos-6.6-64-nocm"
+    centos6_lustre18.vm.box_url = 'puppetlabs/centos-6.6-64-nocm'
+    centos6_lustre18.vm.network "private_network", ip: "10.0.4.21"
+    centos6_lustre18.vm.provider "virtualbox" do |v|
+      v.memory = 256  # rpmbuild of lustre is greedy
+      v.cpus = 1
+    end
+  end
+  # centos7 client
+  config.vm.define "centos7" do |centos7|
+    centos7.vm.box = "puppetlabs/centos-7.2-64-nocm"
+    centos7.vm.box_url = 'puppetlabs/centos-7.2-64-nocm'
+    centos7.vm.network "private_network", ip: "10.0.4.30"
+    centos7.vm.provider "virtualbox" do |v|
+      v.memory = 384
+      v.cpus = 1
+    end
+  end
+  # ubuntu12 client
+  config.vm.define "ubuntu12" do |ubuntu12|
+    ubuntu12.vm.box = "puppetlabs/ubuntu-12.04-64-nocm"
+    ubuntu12.vm.box_url = 'puppetlabs/ubuntu-12.04-64-nocm'
+    ubuntu12.vm.network "private_network", ip: "10.0.4.40"
+    ubuntu12.vm.synced_folder ".", "/vagrant", disabled: true
+    ubuntu12.vm.provider "virtualbox" do |v|
+      v.memory = 128
+      v.cpus = 1
+    end
+  end
   # disable IPv6 on Linux
   $linux_disable_ipv6 = <<SCRIPT
 sysctl -w net.ipv6.conf.default.disable_ipv6=1
@@ -141,24 +165,15 @@ systemctl stop firewalld.service
 SCRIPT
   # common settings on all machines
   $etc_hosts = <<SCRIPT
-cat <<END > /etc/hosts
-127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
-::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+cat <<END >> /etc/hosts
 10.0.4.6 mds01
 10.0.4.7 mds02
 10.0.4.8 oss01
 10.0.4.9 oss02
 10.0.4.20 centos6
+10.0.4.21 centos6_lustre18
 10.0.4.30 centos7
-10.0.4.50 cl0
-10.0.4.51 cl1
-10.0.4.52 cl2
-10.0.4.53 cl3
-10.0.4.54 cl4
-10.0.4.55 cl5
-10.0.4.56 cl6
-10.0.4.57 cl7
-10.0.4.58 cl8
+10.0.4.40 ubuntu12
 END
 SCRIPT
   # provision puppet clients
@@ -174,10 +189,7 @@ yum clean all
 cat <<'END' > /etc/yum.repos.d/lustre_server.repo
 [lustre-server]
 name=CentOS-$releasever - Lustre server
-minrate=0
-timeout=300
-baseurl=https://downloads.whamcloud.com/public/lustre/lustre-2.8.0/el$releasever/server/
-#baseurl=https://downloads.hpdd.intel.com/public/lustre/lustre-2.8.0/el$releasever/server/
+baseurl=https://downloads.hpdd.intel.com/public/lustre/lustre-2.8.0/el$releasever/server/
 # https://jira.hpdd.intel.com/browse/LU-1354
 gpgcheck=0
 END
@@ -210,10 +222,22 @@ yum clean all
 cat <<'END' > /etc/yum.repos.d/lustre_client.repo
 [lustre-client]
 name=CentOS-$releasever - Lustre client
-minrate=0
-timeout=300
-baseurl=https://downloads.whamcloud.com/public/lustre/lustre-2.8.0/el$releasever/client/
-#baseurl=https://downloads.hpdd.intel.com/public/lustre/lustre-2.8.0/el$releasever/client/
+baseurl=https://downloads.hpdd.intel.com/public/lustre/lustre-2.8.0/el$releasever/client/
+# https://jira.hpdd.intel.com/browse/LU-1354
+gpgcheck=0
+END
+SCRIPT
+  $lustre_client_189_wc1_rhel = <<SCRIPT
+yum clean all
+cat <<'END' > /etc/yum.repos.d/lustre_client.repo
+[lustre-client]
+name=CentOS-$releasever - Lustre client
+baseurl=https://downloads.hpdd.intel.com/public/lustre/lustre-1.8.9-wc1/el$releasever/client/RPMS/
+# https://jira.hpdd.intel.com/browse/LU-1354
+gpgcheck=0
+[lustre-client-source]
+name=CentOS-$releasever - Lustre client-source
+baseurl=https://downloads.hpdd.intel.com/public/lustre/lustre-1.8.9-wc1/el$releasever/client/SRPMS/
 # https://jira.hpdd.intel.com/browse/LU-1354
 gpgcheck=0
 END
@@ -235,10 +259,7 @@ yum clean all
 cat <<'END' > /etc/yum.repos.d/e2fsprogs.repo
 [e2fsprogs]
 name=CentOS-$releasever - e2fsprogs
-minrate=0
-timeout=300
-baseurl=https://downloads.whamcloud.com/public/e2fsprogs/latest/el$releasever/
-#baseurl=https://downloads.hpdd.intel.com/public/e2fsprogs/latest/el$releasever/
+baseurl=https://downloads.hpdd.intel.com/public/e2fsprogs/latest/el$releasever/
 #baseurl=http://build.whamcloud.com/job/e2fsprogs-master/arch=$basearch%2Cdistro=el$releasever/lastSuccessfulBuild/artifact/_topdir/RPMS/
 # https://groups.google.com/forum/#!topic/lustre-discuss-list/U93Ja6Xkxfk
 gpgcheck=0
@@ -394,28 +415,108 @@ SCRIPT
     # start lustre object storage targets
     #oss02.vm.provision :shell, :inline => "mount /lustre/ost02", run: "always"
   end
-  
-  # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  (0..8).each do |c_idx|
-    config.vm.define "cl#{c_idx}" do |client|
-      client.vm.provision :shell, :inline => "hostname cl#{c_idx}", run: "always"
-      # client.vm.provision :shell, :inline => $etc_hosts, run: "always"
-      client.vm.provision :shell, :inline => $etc_hosts
-      # client.vm.provision :shell, :inline => $yum_problem_making_ssl_connection
-      client.vm.provision :shell, :inline => $systemctl_stop_firewalld, run: "always"
-      client.vm.provision :shell, :inline => $setenforce_0, run: "always"
-      # client.vm.provision :shell, :inline => "source /xch/ldms/setup.sh", run: "always"
+  config.vm.define "centos6" do |centos6|
+    centos6.vm.provision :shell, :inline => "hostname centos6", run: "always"
+    centos6.vm.provision :shell, :inline => $etc_hosts
+    centos6.vm.provision :shell, :inline => $yum_problem_making_ssl_connection
+    centos6.vm.provision :shell, :inline => $epel6
+    centos6.vm.provision :shell, :inline => $lustre_client_rhel
+    centos6.vm.provision :shell, :inline => "yum -y install yum-plugin-versionlock"
+    # install lustre-client and then lock the kernel version
+    centos6.vm.provision "shell" do |s|
+      s.inline = $centos_vault
+      # kernel-2.6.32-573.12.1.el6 needed by lustre-2.8.0 in CentOS-6.7
+      s.args   = ["6.7"]
     end
-  end
-
-  config.vm.define "cl0" do |client|
-    client.vm.provision :shell, :inline => "source /xch/start_control.sh", run: "always"
-  end
-
-  (1..8).each do |c_idx|
-    config.vm.define "cl#{c_idx}" do |client|
-      client.vm.provision :shell, :inline => "source /xch/start_compute.sh", run: "always"
+    centos6.vm.provision :shell, :inline => "yum -y install lustre-client"
+    centos6.vm.provision :shell, :inline => $kernel_version_lock
+    centos6.vm.provision :shell, :inline => "yum versionlock lustre-client"
+    centos6.vm.provision "shell" do |s|
+      s.inline = $etc_fstab_lustre
+      s.args   = ["mds01@tcp0:mds02@tcp0:/testfs", "/lustre", "defaults,_netdev,localflock,user_xattr"]
     end
+    # https://github.com/aidanns/vagrant-reload/issues/6
+    #centos6.vm.provision :reload
+    #centos6.vm.provision :shell, :inline => "reboot"  # this gives exit 1
+    centos6.vm.provision :shell, :inline => $setenforce_0, run: "always"
   end
-  # ==============================================================================================================
+  config.vm.define "centos6_lustre18" do |centos6_lustre18|
+    centos6_lustre18.vm.provision :shell, :inline => "hostname centos6_lustre18", run: "always"
+    centos6_lustre18.vm.provision :shell, :inline => $etc_hosts
+    centos6_lustre18.vm.provision :shell, :inline => $yum_problem_making_ssl_connection
+    centos6_lustre18.vm.provision :shell, :inline => $epel6
+    centos6_lustre18.vm.provision :shell, :inline => "yum -y install yum-plugin-versionlock"
+    # lock the default kernel version
+    centos6_lustre18.vm.provision :shell, :inline => $kernel_version_lock
+    centos6_lustre18.vm.provision :shell, :inline => "yum -y install wget"
+    centos6_lustre18.vm.provision :shell, :inline => "wget https://downloads.hpdd.intel.com/public/lustre/lustre-1.8.9-wc1/el6/client/SRPMS/lustre-client-1.8.9-wc1_2.6.32_279.19.1.el6.x86_64.src.rpm"
+    centos6_lustre18.vm.provision :shell, :inline => "yum -y install yum-utils"
+    centos6_lustre18.vm.provision :shell, :inline => "yum -y install rpm-build libtool libselinux-devel"
+    centos6_lustre18.vm.provision :shell, :inline => "yum -y install git patch unzip"
+    centos6_lustre18.vm.provision :shell, :inline => "rpm2cpio lustre-client*.rpm | cpio -ivdm"
+    centos6_lustre18.vm.provision :shell, :inline => "rm -f lustre-1.8.9.tar.gz"
+    centos6_lustre18.vm.provision :shell, :inline => "git clone -b b1_8 https://github.com/rread/lustre.git lustre-1.8.9"
+    # https://lists.01.org/pipermail/hpdd-discuss/2015-March/001890.html
+    centos6_lustre18.vm.provision :shell, :inline => "wget 'https://lists.01.org/pipermail/hpdd-discuss/attachments/20141107/95bf4389/attachment.patch'"
+    # http://review.whamcloud.com/#/c/8607/5
+    centos6_lustre18.vm.provision :shell, :inline => "wget 'http://review.whamcloud.com/changes/8607/revisions/2661328b41a7bf6d47b735ee166910c3c94bbb2c/patch?zip'"
+    centos6_lustre18.vm.provision :shell, :inline => "unzip 'patch?zip'"
+    centos6_lustre18.vm.provision :shell, :inline => "cd lustre-1.8.9; patch -p1 < ../2661328b.diff"
+    centos6_lustre18.vm.provision :shell, :inline => "cd lustre-1.8.9; patch -p1 < ../attachment.patch"
+    centos6_lustre18.vm.provision :shell, :inline => "cd lustre-1.8.9; sh autogen.sh"
+    centos6_lustre18.vm.provision :shell, :inline => "tar zcf lustre-1.8.9.tar.gz lustre-1.8.9"
+    centos6_lustre18.vm.provision :shell, :inline => 'rpmbuild -bs --define "_sourcedir $PWD" --define "lustre_name lustre-client" --define "configure_args --disable-server --enable-client" --without servers lustre.spec'
+    centos6_lustre18.vm.provision :shell, :inline => 'rpmbuild --rebuild --define "lustre_name lustre-client" --define "configure_args --disable-server --enable-client" /root/rpmbuild/SRPMS/lustre-client-1.8.9-*.src.rpm'
+    centos6_lustre18.vm.provision :shell, :inline => "yum -y install createrepo"
+    centos6_lustre18.vm.provision :shell, :inline => "cd /root/rpmbuild/RPMS; createrepo `pwd`"
+    centos6_lustre18.vm.provision :shell, :inline => $lustre_client_local_rhel
+    centos6_lustre18.vm.provision :shell, :inline => "yum -y install lustre-client"
+    centos6_lustre18.vm.provision :shell, :inline => "yum versionlock lustre-client"
+    centos6_lustre18.vm.provision "shell" do |s|
+      s.inline = $etc_fstab_lustre
+      s.args   = ["mds01@tcp0:mds02@tcp0:/testfs", "/lustre", "defaults,_netdev,localflock,user_xattr"]
+    end
+    # https://github.com/aidanns/vagrant-reload/issues/6
+    centos6_lustre18.vm.provision :reload
+    #centos6_lustre18.vm.provision :shell, :inline => "reboot"  # this gives exit 1
+    centos6_lustre18.vm.provision :shell, :inline => $setenforce_0, run: "always"
+  end
+  config.vm.define "centos7" do |centos7|
+    centos7.vm.provision :shell, :inline => "hostname centos7", run: "always"
+    centos7.vm.provision :shell, :inline => $etc_hosts
+    centos7.vm.provision :shell, :inline => $yum_problem_making_ssl_connection
+    centos7.vm.provision :shell, :inline => $epel7
+    centos7.vm.provision :shell, :inline => $lustre_client_rhel
+    centos7.vm.provision :shell, :inline => "yum -y install yum-plugin-versionlock"
+    # lock the default kernel version
+    centos7.vm.provision "shell" do |s|
+      s.inline = $centos_vault
+      # kernel-3.10.0_327.3.1.el7.x86_64 needed by lustre-2.8.0 in CentOS-7.2.1511
+      s.args   = ["7.2.1511"]
+    end
+    centos7.vm.provision :shell, :inline => $kernel_version_lock
+    centos7.vm.provision :shell, :inline => "yum -y install lustre-client"
+    centos7.vm.provision :shell, :inline => "yum versionlock lustre-client"
+    centos7.vm.provision "shell" do |s|
+      s.inline = $etc_fstab_lustre
+      s.args   = ["mds01@tcp0:mds02@tcp0:/testfs", "/lustre", "defaults,_netdev,localflock,user_xattr"]
+    end
+    # https://github.com/aidanns/vagrant-reload/issues/6
+    #centos7.vm.provision :reload
+    #centos7.vm.provision :shell, :inline => "reboot"  # this gives exit 1
+    centos7.vm.provision :shell, :inline => $systemctl_stop_firewalld, run: "always"
+    centos7.vm.provision :shell, :inline => $setenforce_0, run: "always"
+  end
+  config.vm.define "ubuntu12" do |ubuntu12|
+    ubuntu12.vm.provision :shell, :inline => "hostname ubuntu12", run: "always"
+    ubuntu12.vm.provision :shell, :inline => $etc_hosts
+    ubuntu12.vm.provision :shell, :inline => "apt-get -y install lustre-utils"
+    ubuntu12.vm.provision "shell" do |s|
+      s.inline = $etc_fstab_lustre
+      s.args   = ["mds01@tcp0:mds02@tcp0:/testfs", "/lustre", "defaults,_netdev,localflock,user_xattr"]
+    end
+    # https://github.com/aidanns/vagrant-reload/issues/6
+    #ubuntu12.vm.provision :reload
+    #ubuntu12.vm.provision :shell, :inline => "reboot"  # this gives exit 1
+  end
 end

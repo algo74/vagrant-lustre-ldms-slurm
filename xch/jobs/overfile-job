@@ -1,0 +1,12 @@
+#!/bin/sh
+ls /proc/fs/lustre/llite
+ls /lustre/all/
+counter=1
+while [ $counter -le $2 ] 
+do
+  echo $counter
+  dd if=/dev/zero of=/lustre/all/test_$HOSTNAME bs=1M count=$1 oflag=direct,sync
+  ((counter++))
+done
+echo All done
+

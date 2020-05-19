@@ -9,18 +9,18 @@ Vagrant.configure(2) do |config|
     mds01.vm.synced_folder ".", "/vagrant", disabled: true
     mds01.vm.network "private_network", ip: "10.0.4.6"
     mds01.vm.provider "virtualbox" do |v|
-      v.memory = 512  # lustre is greedy and segfaults with small RAM
+      v.memory = 256  # lustre is greedy and segfaults with small RAM
       # https://jira.hpdd.intel.com/browse/LU-5697
       v.cpus = 1
     end
     mds01.vm.provider "virtualbox" do |vb|
       if !File.exist?("mgt01.vdi")
-        vb.customize ["createhd", "--filename", "mgt01.vdi", "--size", 1024, "--variant", "Fixed"]
+        vb.customize ["createhd", "--filename", "mgt01.vdi", "--size", 64, "--variant", "Fixed"]
         vb.customize ["modifyhd", "mgt01.vdi", "--type", "shareable"]
       end
       vb.customize ["storageattach", :id, "--storagectl", "IDE Controller", "--port", 0, "--device", 1, "--type", "hdd", "--medium", "mgt01.vdi"]
       if !File.exist?("mdt01.vdi")
-        vb.customize ["createhd", "--filename", "mdt01.vdi", "--size", 1024, "--variant", "Fixed"]
+        vb.customize ["createhd", "--filename", "mdt01.vdi", "--size", 128, "--variant", "Fixed"]
         vb.customize ["modifyhd", "mdt01.vdi", "--type", "shareable"]
       end
       vb.customize ["storageattach", :id, "--storagectl", "IDE Controller", "--port", 1, "--device", 0, "--type", "hdd", "--medium", "mdt01.vdi"]
@@ -34,18 +34,18 @@ Vagrant.configure(2) do |config|
     mds02.vm.synced_folder ".", "/vagrant", disabled: true
     mds02.vm.network "private_network", ip: "10.0.4.7"
     mds02.vm.provider "virtualbox" do |v|
-      v.memory = 512  # lustre is greedy and segfaults with small RAM
+      v.memory = 256  # lustre is greedy and segfaults with small RAM
       # https://jira.hpdd.intel.com/browse/LU-5679
       v.cpus = 1
     end
     mds02.vm.provider "virtualbox" do |vb|
       if !File.exist?("mgt01.vdi")
-        vb.customize ["createhd", "--filename", "mgt01.vdi", "--size", 1024, "--variant", "Fixed"]
+        vb.customize ["createhd", "--filename", "mgt01.vdi", "--size", 64, "--variant", "Fixed"]
         vb.customize ["modifyhd", "mgt01.vdi", "--type", "shareable"]
       end
       vb.customize ["storageattach", :id, "--storagectl", "IDE Controller", "--port", 0, "--device", 1, "--type", "hdd", "--medium", "mgt01.vdi"]
       if !File.exist?("mdt01.vdi")
-        vb.customize ["createhd", "--filename", "mdt01.vdi", "--size", 1024, "--variant", "Fixed"]
+        vb.customize ["createhd", "--filename", "mdt01.vdi", "--size", 128, "--variant", "Fixed"]
         vb.customize ["modifyhd", "mdt01.vdi", "--type", "shareable"]
       end
       vb.customize ["storageattach", :id, "--storagectl", "IDE Controller", "--port", 1, "--device", 0, "--type", "hdd", "--medium", "mdt01.vdi"]
@@ -59,18 +59,18 @@ Vagrant.configure(2) do |config|
     oss01.vm.synced_folder ".", "/vagrant", disabled: true
     oss01.vm.network "private_network", ip: "10.0.4.8"
     oss01.vm.provider "virtualbox" do |v|
-      v.memory = 512  # lustre is greedy and segfaults with small RAM
+      v.memory = 256  # lustre is greedy and segfaults with small RAM
       # https://jira.hpdd.intel.com/browse/LU-5697
       v.cpus = 1
     end
     oss01.vm.provider "virtualbox" do |vb|
       if !File.exist?("ost01.vdi")
-        vb.customize ["createhd", "--filename", "ost01.vdi", "--size", 8192, "--variant", "Fixed"]
+        vb.customize ["createhd", "--filename", "ost01.vdi", "--size", 768, "--variant", "Fixed"]
         vb.customize ["modifyhd", "ost01.vdi", "--type", "shareable"]
       end
       vb.customize ["storageattach", :id, "--storagectl", "IDE Controller", "--port", 1, "--device", 0, "--type", "hdd", "--medium", "ost01.vdi"]
       if !File.exist?("ost02.vdi")
-        vb.customize ["createhd", "--filename", "ost02.vdi", "--size", 8192, "--variant", "Fixed"]
+        vb.customize ["createhd", "--filename", "ost02.vdi", "--size", 768, "--variant", "Fixed"]
         vb.customize ["modifyhd", "ost02.vdi", "--type", "shareable"]
       end
       vb.customize ["storageattach", :id, "--storagectl", "IDE Controller", "--port", 1, "--device", 1, "--type", "hdd", "--medium", "ost02.vdi"]
@@ -84,18 +84,18 @@ Vagrant.configure(2) do |config|
     oss02.vm.synced_folder ".", "/vagrant", disabled: true
     oss02.vm.network "private_network", ip: "10.0.4.9"
     oss02.vm.provider "virtualbox" do |v|
-      v.memory = 512  # lustre is greedy and segfaults with small RAM
+      v.memory = 256  # lustre is greedy and segfaults with small RAM
       # https://jira.hpdd.intel.com/browse/LU-5697
       v.cpus = 1
     end
     oss02.vm.provider "virtualbox" do |vb|
       if !File.exist?("ost01.vdi")
-        vb.customize ["createhd", "--filename", "ost01.vdi", "--size", 8192, "--variant", "Fixed"]
+        vb.customize ["createhd", "--filename", "ost01.vdi", "--size", 768, "--variant", "Fixed"]
         vb.customize ["modifyhd", "ost01.vdi", "--type", "shareable"]
       end
       vb.customize ["storageattach", :id, "--storagectl", "IDE Controller", "--port", 1, "--device", 0, "--type", "hdd", "--medium", "ost01.vdi"]
       if !File.exist?("ost02.vdi")
-        vb.customize ["createhd", "--filename", "ost02.vdi", "--size", 8192, "--variant", "Fixed"]
+        vb.customize ["createhd", "--filename", "ost02.vdi", "--size", 768, "--variant", "Fixed"]
         vb.customize ["modifyhd", "ost02.vdi", "--type", "shareable"]
       end
       vb.customize ["storageattach", :id, "--storagectl", "IDE Controller", "--port", 1, "--device", 1, "--type", "hdd", "--medium", "ost02.vdi"]
@@ -174,10 +174,7 @@ yum clean all
 cat <<'END' > /etc/yum.repos.d/lustre_server.repo
 [lustre-server]
 name=CentOS-$releasever - Lustre server
-minrate=0
-timeout=300
-baseurl=https://downloads.whamcloud.com/public/lustre/lustre-2.8.0/el$releasever/server/
-#baseurl=https://downloads.hpdd.intel.com/public/lustre/lustre-2.8.0/el$releasever/server/
+baseurl=https://downloads.hpdd.intel.com/public/lustre/lustre-2.8.0/el$releasever/server/
 # https://jira.hpdd.intel.com/browse/LU-1354
 gpgcheck=0
 END
@@ -210,10 +207,22 @@ yum clean all
 cat <<'END' > /etc/yum.repos.d/lustre_client.repo
 [lustre-client]
 name=CentOS-$releasever - Lustre client
-minrate=0
-timeout=300
-baseurl=https://downloads.whamcloud.com/public/lustre/lustre-2.8.0/el$releasever/client/
-#baseurl=https://downloads.hpdd.intel.com/public/lustre/lustre-2.8.0/el$releasever/client/
+baseurl=https://downloads.hpdd.intel.com/public/lustre/lustre-2.8.0/el$releasever/client/
+# https://jira.hpdd.intel.com/browse/LU-1354
+gpgcheck=0
+END
+SCRIPT
+  $lustre_client_189_wc1_rhel = <<SCRIPT
+yum clean all
+cat <<'END' > /etc/yum.repos.d/lustre_client.repo
+[lustre-client]
+name=CentOS-$releasever - Lustre client
+baseurl=https://downloads.hpdd.intel.com/public/lustre/lustre-1.8.9-wc1/el$releasever/client/RPMS/
+# https://jira.hpdd.intel.com/browse/LU-1354
+gpgcheck=0
+[lustre-client-source]
+name=CentOS-$releasever - Lustre client-source
+baseurl=https://downloads.hpdd.intel.com/public/lustre/lustre-1.8.9-wc1/el$releasever/client/SRPMS/
 # https://jira.hpdd.intel.com/browse/LU-1354
 gpgcheck=0
 END
@@ -235,10 +244,7 @@ yum clean all
 cat <<'END' > /etc/yum.repos.d/e2fsprogs.repo
 [e2fsprogs]
 name=CentOS-$releasever - e2fsprogs
-minrate=0
-timeout=300
-baseurl=https://downloads.whamcloud.com/public/e2fsprogs/latest/el$releasever/
-#baseurl=https://downloads.hpdd.intel.com/public/e2fsprogs/latest/el$releasever/
+baseurl=https://downloads.hpdd.intel.com/public/e2fsprogs/latest/el$releasever/
 #baseurl=http://build.whamcloud.com/job/e2fsprogs-master/arch=$basearch%2Cdistro=el$releasever/lastSuccessfulBuild/artifact/_topdir/RPMS/
 # https://groups.google.com/forum/#!topic/lustre-discuss-list/U93Ja6Xkxfk
 gpgcheck=0
@@ -399,22 +405,23 @@ SCRIPT
   (0..8).each do |c_idx|
     config.vm.define "cl#{c_idx}" do |client|
       client.vm.provision :shell, :inline => "hostname cl#{c_idx}", run: "always"
+      client.vm.provision :shell, :inline => "export HOSTINDEX=#{c_idx}", run: "always"
       # client.vm.provision :shell, :inline => $etc_hosts, run: "always"
       client.vm.provision :shell, :inline => $etc_hosts
       # client.vm.provision :shell, :inline => $yum_problem_making_ssl_connection
       client.vm.provision :shell, :inline => $systemctl_stop_firewalld, run: "always"
       client.vm.provision :shell, :inline => $setenforce_0, run: "always"
-      # client.vm.provision :shell, :inline => "source /xch/ldms/setup.sh", run: "always"
+      client.vm.provision :shell, :inline => "source /xch/ldms/setup.sh", run: "always"
     end
   end
 
   config.vm.define "cl0" do |client|
-    client.vm.provision :shell, :inline => "source /xch/start_control.sh", run: "always"
+    client.vm.provision :shell, :inline => "slurmctld -c", run: "always"
   end
 
   (1..8).each do |c_idx|
     config.vm.define "cl#{c_idx}" do |client|
-      client.vm.provision :shell, :inline => "source /xch/start_compute.sh", run: "always"
+      client.vm.provision :shell, :inline => "slurmd -c", run: "always"
     end
   end
   # ==============================================================================================================
