@@ -14,19 +14,23 @@ Lustre CLI examples
 -------------------
 
 Create new directory: 
- sudo mkdir /lustre/all
- sudo chmod 777 /lustre/all
- sudo lfs setstripe -c 2 /lustre/all
+ 
+    sudo mkdir /lustre/all
+    sudo chmod 777 /lustre/all
+    sudo lfs setstripe -c 2 /lustre/all
 
 Check if Lustre is mounted:
- ls /proc/fs/lustre/llite
+    
+    ls /proc/fs/lustre/llite
 
 Make/remove a file
- dd if=/dev/zero of=/lustre/all/testfile bs=1M count=512
- rm -f /lustre/all/testfile
+
+    dd if=/dev/zero of=/lustre/all/testfile bs=1M count=512
+    rm -f /lustre/all/testfile
 
 Check disk usage
- lfs df -h
+
+     lfs df -h
 
 *************************************
 #    Original info
