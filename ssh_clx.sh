@@ -6,6 +6,6 @@ max=$1
 shift
 for ((n=1;n<=$max;n++)); 
 do
-  echo "${GREEN}====== ${RED}node cl${n}${GREEN} =========${NC}"
+  echo -e "${GREEN}====== ${RED}node cl${n}${GREEN} =========${NC}"
   vagrant ssh -c $* cl$n
 done
