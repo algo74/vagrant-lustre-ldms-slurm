@@ -25,14 +25,14 @@ do
   while [ $index_i -le 16 ] 
   do
     sbatch -N 1 --time=30 /xch/jobs/overfile-batch
-    sleep 1
+    sleep 0.2
     ((index_i++))
   done
   index_i=1
-  while [ $index_i -le 64 ] 
+  while [ $index_i -le 0 ] 
   do
-    sbatch -N 1 --time=5 /xch/jobs/sleep-batch
-    sleep 1
+    sbatch -N 1 --time=6 /xch/jobs/sleep-batch
+    sleep 0.2
     ((index_i++))
   done
   ((counter++))
