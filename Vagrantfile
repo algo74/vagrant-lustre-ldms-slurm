@@ -5,6 +5,8 @@ Vagrant.configure(2) do |config|
   config.vm.define "mds01" do |mds01|
     mds01.vm.box = "puppetlabs/centos-6.6-64-nocm"
     mds01.vm.box_url = 'puppetlabs/centos-6.6-64-nocm'
+    #mds01.vm.box = "geerlingguy/centos6"
+    #mds01.vm.box_url = 'geerlingguy/centos6'
     # installing lustre kernel removes virtualbox guest additions
     mds01.vm.synced_folder ".", "/vagrant", disabled: true
     mds01.vm.network "private_network", ip: "10.0.4.6"
@@ -122,25 +124,72 @@ Vagrant.configure(2) do |config|
   
   # disable IPv6 on Linux
   $linux_disable_ipv6 = <<SCRIPT
+set -x
 sysctl -w net.ipv6.conf.default.disable_ipv6=1
 sysctl -w net.ipv6.conf.all.disable_ipv6=1
 sysctl -w net.ipv6.conf.lo.disable_ipv6=1
 SCRIPT
   # setenforce 0
   $setenforce_0 = <<SCRIPT
+set -x
 if test `getenforce` = 'Enforcing'; then setenforce 0; fi
 #sed -Ei 's/^SELINUX=.*/SELINUX=Permissive/' /etc/selinux/config
 SCRIPT
   # stop iptables
   $service_iptables_stop = <<SCRIPT
+set -x
 service iptables stop
 SCRIPT
   # stop firewalld.service
   $systemctl_stop_firewalld = <<SCRIPT
+set -x
 systemctl stop firewalld.service
 SCRIPT
+
+  # changing vagrant UID and GID
+  $fix_vagrant_user = <<SCRIPT
+echo "Fixing vagrant UID and GID"
+set -x
+chown -R 1000:1000 /home/vagrant
+sed 's/500/1000/g' /etc/group | sudo tee /etc/group
+sed 's/500/1000/g' /etc/passwd | sudo tee /etc/passwd
+find / -path /proc -prune -false -o -user 500 | xargs chown -h 1000
+find / -path /proc -prune -false -o -group 500 | xargs chgrp -h 1000
+SCRIPT
+
+  # update repos
+  $fix_base_repos = <<SCRIPT
+echo "Fixing base repos"
+cat <<'END' > /etc/yum.repos.d/CentOS-Base.repo
+[base]
+name=CentOS-$releasever - Base
+#mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=os&infra=$infra
+#baseurl=http://mirror.centos.org/centos/$releasever/os/$basearch/
+baseurl=http://vault.centos.org/6.10/os/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+
+[updates]
+name=CentOS-$releasever - Updates
+#mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=updates&infra=$infra
+#baseurl=http://mirror.centos.org/centos/$releasever/updates/$basearch/
+baseurl=https://vault.centos.org/6.10/updates/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+
+[extras]
+name=CentOS-$releasever - Extras
+#mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=extras&infra=$infra
+#baseurl=http://mirror.centos.org/centos/$releasever/extras/$basearch/
+baseurl=https://vault.centos.org/6.10/extras/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+END
+SCRIPT
+
   # common settings on all machines
   $etc_hosts = <<SCRIPT
+set -x
 cat <<END > /etc/hosts
 127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
 ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
@@ -163,13 +212,17 @@ END
 SCRIPT
   # provision puppet clients
   $epel6 = <<SCRIPT
-yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
+set -x
+yum -y install http://archives.fedoraproject.org/pub/archive/epel/6/x86_64/epel-release-6-8.noarch.rpm
+# yum -y reinstall http://archives.fedoraproject.org/pub/archive/epel/6/x86_64/epel-release-6-8.noarch.rpm
 SCRIPT
   $epel7 = <<SCRIPT
+set -x
 yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 SCRIPT
   # lustre rhel repos
   $lustre_server_rhel = <<SCRIPT
+set -x
 yum clean all
 cat <<'END' > /etc/yum.repos.d/lustre_server.repo
 [lustre-server]
@@ -183,15 +236,18 @@ gpgcheck=0
 END
 SCRIPT
   $zfs_epel6 = <<SCRIPT
+set -x
 # lustre-osd-zfs-2.8.0 (lustre-server) Requires: zfs-kmod
 yum -y install http://archive.zfsonlinux.org/epel/zfs-release.el6.noarch.rpm
 SCRIPT
   $zfs_epel7 = <<SCRIPT
+set -x
 # lustre-osd-zfs-2.8.0 (lustre-server) Requires: zfs-kmod
 yum -y install http://archive.zfsonlinux.org/epel/zfs-release.el7.noarch.rpm
 SCRIPT
   # CentOS vault (specific version of the kernel needed by lustre)
   $centos_vault = <<SCRIPT
+set -x
 RELEASE=$1
 yum clean all
 cat <<END > /etc/yum.repos.d/vault.repo
@@ -206,6 +262,7 @@ gpgcheck=1
 END
 SCRIPT
   $lustre_client_rhel = <<SCRIPT
+set -x
 yum clean all
 cat <<'END' > /etc/yum.repos.d/lustre_client.repo
 [lustre-client]
@@ -219,6 +276,7 @@ gpgcheck=0
 END
 SCRIPT
   $lustre_client_local_rhel = <<SCRIPT
+set -x
 yum clean all
 cat <<'END' > /etc/yum.repos.d/lustre_client_local.repo
 [lustre-client-local]
@@ -231,6 +289,7 @@ SCRIPT
   # e2fsprogs
   # https://groups.google.com/forum/#!topic/lustre-discuss-list/U93Ja6Xkxfk
   $e2fsprogs_rhel = <<SCRIPT
+set -x
 yum clean all
 cat <<'END' > /etc/yum.repos.d/e2fsprogs.repo
 [e2fsprogs]
@@ -245,10 +304,12 @@ gpgcheck=0
 END
 SCRIPT
   $etc_modprobe_d_lnet = <<SCRIPT
+set -x
 echo "options lnet networks=tcp0(eth1)" >> /etc/modprobe.d/lnet.conf
 SCRIPT
   # lustre mounts
   $etc_fstab_lustre = <<SCRIPT
+set -x
 dev=$1
 mnt=$2
 options=$3
@@ -260,6 +321,7 @@ END
 SCRIPT
   # lustre kernel/firmware - install
   $lustre_kernel_install = <<SCRIPT
+set -x
 kernel_version=`yum list --showduplicates kernel | grep lustre-server | awk '{print $2}'`
 kernel_firmware_version=`yum list --showduplicates kernel-firmware | grep lustre-server | awk '{print $2}'`
 yum -y install --nogpgcheck --setopt=protected_multilib=false kernel-${kernel_version} kernel-firmware-${kernel_firmware_version} kernel-devel-${kernel_version} kernel-headers-${kernel_version}
@@ -267,6 +329,7 @@ yum clean all
 SCRIPT
   # lustre kernel/firmware - install
   $kernel_version_lock = <<SCRIPT
+set -x
 yum versionlock add kernel
 yum versionlock add kernel-firmware
 yum versionlock add kernel-devel
@@ -274,11 +337,17 @@ yum versionlock add kernel-headers
 SCRIPT
   # [Errno 14] problem making ssl connection
   $yum_problem_making_ssl_connection = <<SCRIPT
+set -x
 # [Errno 14] problem making ssl connection
 yum -y update nss* ca-certificates pycurl
 yum clean all
 SCRIPT
   config.vm.define "mds01" do |mds01|
+    mds01.vm.provision :shell do |s|
+      s.inline = $fix_vagrant_user
+      s.reset = true
+    end
+    mds01.vm.provision :shell, :inline => $fix_base_repos
     mds01.vm.provision :shell, :inline => "hostname mds01", run: "always"
     mds01.vm.provision :shell, :inline => $etc_hosts
     mds01.vm.provision :shell, :inline => $yum_problem_making_ssl_connection
@@ -316,6 +385,11 @@ SCRIPT
     #mds01.vm.provision :shell, :inline => "mount /lustre/mdt01", run: "always"
   end
   config.vm.define "mds02" do |mds02|
+    mds02.vm.provision :shell do |s|
+      s.inline = $fix_vagrant_user
+      s.reset = true
+    end
+    mds02.vm.provision :shell, :inline => $fix_base_repos
     mds02.vm.provision :shell, :inline => "hostname mds02", run: "always"
     mds02.vm.provision :shell, :inline => $etc_hosts
     mds02.vm.provision :shell, :inline => $yum_problem_making_ssl_connection
@@ -337,6 +411,11 @@ SCRIPT
     mds02.vm.provision :shell, :inline => $setenforce_0, run: "always"
   end
   config.vm.define "oss01" do |oss01|
+    oss01.vm.provision :shell do |s|
+      s.inline = $fix_vagrant_user
+      s.reset = true
+    end
+    oss01.vm.provision :shell, :inline => $fix_base_repos
     oss01.vm.provision :shell, :inline => "hostname oss01", run: "always"
     oss01.vm.provision :shell, :inline => $etc_hosts
     oss01.vm.provision :shell, :inline => $yum_problem_making_ssl_connection
@@ -366,6 +445,11 @@ SCRIPT
     #oss01.vm.provision :shell, :inline => "mount /lustre/ost01", run: "always"
   end
   config.vm.define "oss02" do |oss02|
+    oss02.vm.provision :shell do |s|
+      s.inline = $fix_vagrant_user
+      s.reset = true
+    end
+    oss02.vm.provision :shell, :inline => $fix_base_repos
     oss02.vm.provision :shell, :inline => "hostname oss02", run: "always"
     oss02.vm.provision :shell, :inline => $etc_hosts
     oss02.vm.provision :shell, :inline => $yum_problem_making_ssl_connection
