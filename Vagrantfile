@@ -124,32 +124,36 @@ Vagrant.configure(2) do |config|
   
   # disable IPv6 on Linux
   $linux_disable_ipv6 = <<SCRIPT
-set -x
+echo linux_disable_ipv6
+set -xe
 sysctl -w net.ipv6.conf.default.disable_ipv6=1
 sysctl -w net.ipv6.conf.all.disable_ipv6=1
 sysctl -w net.ipv6.conf.lo.disable_ipv6=1
 SCRIPT
   # setenforce 0
   $setenforce_0 = <<SCRIPT
-set -x
+echo setenforce_0
+set -xe
 if test `getenforce` = 'Enforcing'; then setenforce 0; fi
 #sed -Ei 's/^SELINUX=.*/SELINUX=Permissive/' /etc/selinux/config
 SCRIPT
   # stop iptables
   $service_iptables_stop = <<SCRIPT
-set -x
+echo service_iptables_stop
+set -xe
 service iptables stop
 SCRIPT
   # stop firewalld.service
   $systemctl_stop_firewalld = <<SCRIPT
-set -x
+echo systemctl_stop_firewalld
+set -xe
 systemctl stop firewalld.service
 SCRIPT
 
   # changing vagrant UID and GID
   $fix_vagrant_user = <<SCRIPT
 echo "Fixing vagrant UID and GID"
-set -x
+set -xe
 chown -R 1000:1000 /home/vagrant
 sed 's/500/1000/g' /etc/group | sudo tee /etc/group
 sed 's/500/1000/g' /etc/passwd | sudo tee /etc/passwd
@@ -189,7 +193,8 @@ SCRIPT
 
   # common settings on all machines
   $etc_hosts = <<SCRIPT
-set -x
+echo etc_hosts
+set -xe
 cat <<END > /etc/hosts
 127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
 ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
@@ -212,17 +217,19 @@ END
 SCRIPT
   # provision puppet clients
   $epel6 = <<SCRIPT
-set -x
+echo epel6
+set -xe
 yum -y install http://archives.fedoraproject.org/pub/archive/epel/6/x86_64/epel-release-6-8.noarch.rpm
 # yum -y reinstall http://archives.fedoraproject.org/pub/archive/epel/6/x86_64/epel-release-6-8.noarch.rpm
 SCRIPT
   $epel7 = <<SCRIPT
-set -x
+set -xe
 yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 SCRIPT
   # lustre rhel repos
   $lustre_server_rhel = <<SCRIPT
-set -x
+echo systemctl_stop_firewalld
+set -xe
 yum clean all
 cat <<'END' > /etc/yum.repos.d/lustre_server.repo
 [lustre-server]
@@ -236,18 +243,20 @@ gpgcheck=0
 END
 SCRIPT
   $zfs_epel6 = <<SCRIPT
-set -x
+echo zfs_epel6
+set -xe
 # lustre-osd-zfs-2.8.0 (lustre-server) Requires: zfs-kmod
 yum -y install http://archive.zfsonlinux.org/epel/zfs-release.el6.noarch.rpm
 SCRIPT
   $zfs_epel7 = <<SCRIPT
-set -x
+set -xe
 # lustre-osd-zfs-2.8.0 (lustre-server) Requires: zfs-kmod
 yum -y install http://archive.zfsonlinux.org/epel/zfs-release.el7.noarch.rpm
 SCRIPT
   # CentOS vault (specific version of the kernel needed by lustre)
   $centos_vault = <<SCRIPT
-set -x
+echo centos_vault
+set -xe
 RELEASE=$1
 yum clean all
 cat <<END > /etc/yum.repos.d/vault.repo
@@ -262,7 +271,8 @@ gpgcheck=1
 END
 SCRIPT
   $lustre_client_rhel = <<SCRIPT
-set -x
+echo lustre_client_rhel
+set -xe
 yum clean all
 cat <<'END' > /etc/yum.repos.d/lustre_client.repo
 [lustre-client]
@@ -276,7 +286,8 @@ gpgcheck=0
 END
 SCRIPT
   $lustre_client_local_rhel = <<SCRIPT
-set -x
+echo lustre_client_local_rhel
+set -xe
 yum clean all
 cat <<'END' > /etc/yum.repos.d/lustre_client_local.repo
 [lustre-client-local]
@@ -289,7 +300,8 @@ SCRIPT
   # e2fsprogs
   # https://groups.google.com/forum/#!topic/lustre-discuss-list/U93Ja6Xkxfk
   $e2fsprogs_rhel = <<SCRIPT
-set -x
+echo e2fsprogs_rhel
+set -xe
 yum clean all
 cat <<'END' > /etc/yum.repos.d/e2fsprogs.repo
 [e2fsprogs]
@@ -304,12 +316,14 @@ gpgcheck=0
 END
 SCRIPT
   $etc_modprobe_d_lnet = <<SCRIPT
-set -x
+echo etc_modprobe_d_lnet
+set -xe
 echo "options lnet networks=tcp0(eth1)" >> /etc/modprobe.d/lnet.conf
 SCRIPT
   # lustre mounts
   $etc_fstab_lustre = <<SCRIPT
-set -x
+echo etc_fstab_lustre
+set -xe
 dev=$1
 mnt=$2
 options=$3
@@ -321,7 +335,8 @@ END
 SCRIPT
   # lustre kernel/firmware - install
   $lustre_kernel_install = <<SCRIPT
-set -x
+echo lustre_kernel_install
+set -xe
 kernel_version=`yum list --showduplicates kernel | grep lustre-server | awk '{print $2}'`
 kernel_firmware_version=`yum list --showduplicates kernel-firmware | grep lustre-server | awk '{print $2}'`
 yum -y install --nogpgcheck --setopt=protected_multilib=false kernel-${kernel_version} kernel-firmware-${kernel_firmware_version} kernel-devel-${kernel_version} kernel-headers-${kernel_version}
@@ -329,7 +344,8 @@ yum clean all
 SCRIPT
   # lustre kernel/firmware - install
   $kernel_version_lock = <<SCRIPT
-set -x
+echo kernel_version_lock
+set -xe
 yum versionlock add kernel
 yum versionlock add kernel-firmware
 yum versionlock add kernel-devel
@@ -337,32 +353,56 @@ yum versionlock add kernel-headers
 SCRIPT
   # [Errno 14] problem making ssl connection
   $yum_problem_making_ssl_connection = <<SCRIPT
-set -x
+echo yum_problem_making_ssl_connection
+set -xe
 # [Errno 14] problem making ssl connection
 yum -y update nss* ca-certificates pycurl
 yum clean all
 SCRIPT
-  config.vm.define "mds01" do |mds01|
-    mds01.vm.provision :shell do |s|
-      s.inline = $fix_vagrant_user
-      s.reset = true
+
+  ["mds01", "mds02", "oss01", "oss02"].each do |name|
+    config.vm.define name do |m|
+      # Vagrant UID is 500 on all machines - no need to change it here
+      #m.vm.provision :shell do |s|
+      #  s.inline = $fix_vagrant_user
+      #  s.reset = true
+      #end
+      m.vm.provision :shell, :inline => $fix_base_repos
+      m.vm.provision :shell, :inline => "hostname #{name}", run: "always"
+      m.vm.provision :shell, :inline => $etc_hosts
+      m.vm.provision :shell, :inline => $yum_problem_making_ssl_connection
+      m.vm.provision :shell, :inline => $epel6
+      m.vm.provision :shell, :inline => $lustre_server_rhel
+      m.vm.provision :shell, :inline => $e2fsprogs_rhel
+      m.vm.provision :shell, :inline => $lustre_kernel_install
+      m.vm.provision :shell, :inline => "yum -y install yum-plugin-versionlock"
+      m.vm.provision :shell, :inline => $kernel_version_lock
     end
-    mds01.vm.provision :shell, :inline => $fix_base_repos
-    mds01.vm.provision :shell, :inline => "hostname mds01", run: "always"
-    mds01.vm.provision :shell, :inline => $etc_hosts
-    mds01.vm.provision :shell, :inline => $yum_problem_making_ssl_connection
-    mds01.vm.provision :shell, :inline => $epel6
-    mds01.vm.provision :shell, :inline => $lustre_server_rhel
-    mds01.vm.provision :shell, :inline => $e2fsprogs_rhel
-    mds01.vm.provision :shell, :inline => $lustre_kernel_install
-    mds01.vm.provision :shell, :inline => "yum -y install yum-plugin-versionlock"
-    mds01.vm.provision :shell, :inline => $kernel_version_lock
-    mds01.vm.provision :shell, :inline => "yum -y install lustre-osd-ldiskfs* lustre e2fsprogs* lustre-tests"
-    mds01.vm.provision :shell, :inline => "yum versionlock lustre* e2fsprogs* libcom* libss libss-devel"
-    mds01.vm.provision :shell, :inline => $etc_modprobe_d_lnet
-    mds01.vm.provision :shell, :inline => "chkconfig lnet on"
-    mds01.vm.provision :shell, :inline => "chkconfig lustre on"
-    mds01.vm.provision :shell, :inline => "chkconfig iptables off"
+  end
+  
+  ["mds01", "mds02"].each do |name|
+    config.vm.define name do |m|
+      m.vm.provision :shell, :inline => "yum -y install lustre-osd-ldiskfs* lustre e2fsprogs* lustre-tests"
+    end
+  end
+
+  ["oss01", "oss02"].each do |name|
+    config.vm.define name do |m|
+      m.vm.provision :shell, :inline => "yum -y install lustre-osd-ldiskfs* lustre e2fsprogs*"
+    end
+  end
+  
+  ["mds01", "mds02", "oss01", "oss02"].each do |name|
+    config.vm.define name do |m|
+      m.vm.provision :shell, :inline => "yum versionlock lustre* e2fsprogs* libcom* libss libss-devel"
+      m.vm.provision :shell, :inline => $etc_modprobe_d_lnet
+      m.vm.provision :shell, :inline => "chkconfig lnet on"
+      m.vm.provision :shell, :inline => "chkconfig lustre on"
+      m.vm.provision :shell, :inline => "chkconfig iptables off"
+    end
+  end
+
+  config.vm.define "mds01" do |mds01|
     # configure lustre management server
     mds01.vm.provision :shell, :inline => "mkfs.lustre --backfstype=ldiskfs --reformat --fsname=testfs --mgs --failnode=mds02@tcp0 /dev/sdb"
     mds01.vm.provision "shell" do |s|
@@ -384,53 +424,15 @@ SCRIPT
     # start lustre metadata server
     #mds01.vm.provision :shell, :inline => "mount /lustre/mdt01", run: "always"
   end
+  
   config.vm.define "mds02" do |mds02|
-    mds02.vm.provision :shell do |s|
-      s.inline = $fix_vagrant_user
-      s.reset = true
-    end
-    mds02.vm.provision :shell, :inline => $fix_base_repos
-    mds02.vm.provision :shell, :inline => "hostname mds02", run: "always"
-    mds02.vm.provision :shell, :inline => $etc_hosts
-    mds02.vm.provision :shell, :inline => $yum_problem_making_ssl_connection
-    mds02.vm.provision :shell, :inline => $epel6
-    mds02.vm.provision :shell, :inline => $lustre_server_rhel
-    mds02.vm.provision :shell, :inline => $e2fsprogs_rhel
-    mds02.vm.provision :shell, :inline => $lustre_kernel_install
-    mds02.vm.provision :shell, :inline => "yum -y install yum-plugin-versionlock"
-    mds02.vm.provision :shell, :inline => $kernel_version_lock
-    mds02.vm.provision :shell, :inline => "yum -y install lustre-osd-ldiskfs* lustre e2fsprogs* lustre-tests"
-    mds02.vm.provision :shell, :inline => "yum versionlock lustre* e2fsprogs* libcom* libss libss-devel"
-    mds02.vm.provision :shell, :inline => $etc_modprobe_d_lnet
-    mds02.vm.provision :shell, :inline => "chkconfig lnet on"
-    mds02.vm.provision :shell, :inline => "chkconfig lustre on"
-    mds02.vm.provision :shell, :inline => "chkconfig iptables off"
     # https://github.com/aidanns/vagrant-reload/issues/6
     #mds02.vm.provision :reload
     #mds02.vm.provision :shell, :inline => "reboot"  # this gives exit 1
     mds02.vm.provision :shell, :inline => $setenforce_0, run: "always"
   end
+  
   config.vm.define "oss01" do |oss01|
-    oss01.vm.provision :shell do |s|
-      s.inline = $fix_vagrant_user
-      s.reset = true
-    end
-    oss01.vm.provision :shell, :inline => $fix_base_repos
-    oss01.vm.provision :shell, :inline => "hostname oss01", run: "always"
-    oss01.vm.provision :shell, :inline => $etc_hosts
-    oss01.vm.provision :shell, :inline => $yum_problem_making_ssl_connection
-    oss01.vm.provision :shell, :inline => $epel6
-    oss01.vm.provision :shell, :inline => $lustre_server_rhel
-    oss01.vm.provision :shell, :inline => $e2fsprogs_rhel
-    oss01.vm.provision :shell, :inline => $lustre_kernel_install
-    oss01.vm.provision :shell, :inline => "yum -y install yum-plugin-versionlock"
-    oss01.vm.provision :shell, :inline => $kernel_version_lock
-    oss01.vm.provision :shell, :inline => "yum -y install lustre-osd-ldiskfs* lustre e2fsprogs*"
-    oss01.vm.provision :shell, :inline => "yum versionlock lustre* e2fsprogs* libcom* libss libss-devel"
-    oss01.vm.provision :shell, :inline => $etc_modprobe_d_lnet
-    oss01.vm.provision :shell, :inline => "chkconfig lnet on"
-    oss01.vm.provision :shell, :inline => "chkconfig lustre on"
-    oss01.vm.provision :shell, :inline => "chkconfig iptables off"
     # configure lustre object storage targets
     oss01.vm.provision :shell, :inline => "mkfs.lustre --backfstype=ldiskfs --reformat --fsname=testfs --ost --index=0 --failnode=oss02@tcp0 --mgsnode=mds01@tcp0 --mgsnode=mds02@tcp0 /dev/sdb"
     oss01.vm.provision "shell" do |s|
@@ -445,26 +447,6 @@ SCRIPT
     #oss01.vm.provision :shell, :inline => "mount /lustre/ost01", run: "always"
   end
   config.vm.define "oss02" do |oss02|
-    oss02.vm.provision :shell do |s|
-      s.inline = $fix_vagrant_user
-      s.reset = true
-    end
-    oss02.vm.provision :shell, :inline => $fix_base_repos
-    oss02.vm.provision :shell, :inline => "hostname oss02", run: "always"
-    oss02.vm.provision :shell, :inline => $etc_hosts
-    oss02.vm.provision :shell, :inline => $yum_problem_making_ssl_connection
-    oss02.vm.provision :shell, :inline => $epel6
-    oss02.vm.provision :shell, :inline => $lustre_server_rhel
-    oss02.vm.provision :shell, :inline => $e2fsprogs_rhel
-    oss02.vm.provision :shell, :inline => $lustre_kernel_install
-    oss02.vm.provision :shell, :inline => "yum -y install yum-plugin-versionlock"
-    oss02.vm.provision :shell, :inline => $kernel_version_lock
-    oss02.vm.provision :shell, :inline => "yum -y install lustre-osd-ldiskfs* lustre e2fsprogs*"
-    oss02.vm.provision :shell, :inline => "yum versionlock lustre* e2fsprogs* libcom* libss libss-devel"
-    oss02.vm.provision :shell, :inline => $etc_modprobe_d_lnet
-    oss02.vm.provision :shell, :inline => "chkconfig lnet on"
-    oss02.vm.provision :shell, :inline => "chkconfig lustre on"
-    oss02.vm.provision :shell, :inline => "chkconfig iptables off"
     # configure lustre object storage targets
     oss02.vm.provision :shell, :inline => "mkfs.lustre --backfstype=ldiskfs --reformat --fsname=testfs --ost --index=1 --failnode=oss01@tcp0 --mgsnode=mds01@tcp0 --mgsnode=mds02@tcp0 /dev/sdc"
     oss02.vm.provision "shell" do |s|
