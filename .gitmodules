@@ -1,0 +1,3 @@
+[submodule "xch/py-sim-serv"]
+	path = xch/py-sim-serv
+	url = https://github.com/algo74/py-sim-serv
