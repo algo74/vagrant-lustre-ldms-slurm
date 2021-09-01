@@ -1,0 +1,5 @@
+#!/bin/sh
+#SBATCH --output=/xch/logs/jobs/slurm-%j.out
+
+srun /xch/scripts/jobs/overfile-job  512 2
+

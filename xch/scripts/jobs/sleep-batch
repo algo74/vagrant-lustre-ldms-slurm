@@ -1,0 +1,5 @@
+#!/bin/sh
+#SBATCH --output=/xch/logs/jobs/slurm-%j.out
+
+
+srun sleep 300

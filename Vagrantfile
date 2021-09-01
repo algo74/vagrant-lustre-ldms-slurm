@@ -1,5 +1,8 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
+
+cur_dir = File.dirname(File.expand_path(__FILE__))
+
 Vagrant.configure(2) do |config|
   # mds01
   config.vm.define "mds01" do |mds01|
@@ -110,8 +113,9 @@ Vagrant.configure(2) do |config|
   (0..8).each do |c_idx|
     config.vm.define "cl#{c_idx}" do |client|
       client.vm.box = "basenode"
-      client.vm.box_url = '~/vc/basenode/basenode'
+      client.vm.box_url = 'basenode/basenode'
       client.vm.synced_folder "xch", "/xch"
+      
       client.vm.network "private_network", ip: "10.0.4.5#{c_idx}"
       client.vm.provider "virtualbox" do |v|
         v.memory = 1024
@@ -367,6 +371,8 @@ SCRIPT
       #  s.inline = $fix_vagrant_user
       #  s.reset = true
       #end
+      # Make "slurm" user with same UID on all machines (may be not needed on Lustre servers)
+      m.vm.provision :shell, :inline => "useradd -u 1001 slurm" 
       m.vm.provision :shell, :inline => $fix_base_repos
       m.vm.provision :shell, :inline => "hostname #{name}", run: "always"
       m.vm.provision :shell, :inline => $etc_hosts
@@ -470,17 +476,19 @@ SCRIPT
       # client.vm.provision :shell, :inline => $yum_problem_making_ssl_connection
       client.vm.provision :shell, :inline => $systemctl_stop_firewalld, run: "always"
       client.vm.provision :shell, :inline => $setenforce_0, run: "always"
-      # client.vm.provision :shell, :inline => "source /xch/ldms/setup.sh", run: "always"
+      client.vm.provision :shell, 
+        inline: "cp /vagrant/config/envvars.sh /etc/profile.d/zzz_99_envvars.sh"
+      client.vm.provision :shell, path: "config/envvars.sh"
     end
   end
 
   config.vm.define "cl0" do |client|
-    client.vm.provision :shell, :inline => "source /xch/start_control.sh", run: "always"
+    client.vm.provision :shell, :path => "config/start_control.sh", run: "always"
   end
 
   (1..8).each do |c_idx|
     config.vm.define "cl#{c_idx}" do |client|
-      client.vm.provision :shell, :inline => "source /xch/start_compute.sh", run: "always"
+      client.vm.provision :shell, :path => "config/start_compute.sh", run: "always"
     end
   end
   # ==============================================================================================================

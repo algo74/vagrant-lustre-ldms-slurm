@@ -1,0 +1,3 @@
+# this folder is needed to store results of py-sim-serv (for future analysis during development)
+*
+!/.gitignore

@@ -1,7 +1,8 @@
 .vagrant
 *.vdi
 
-
-xch/logs/*
 xch/results/*
 xch/py-sim-serv/*
+
+/basenode/basenode
+/basenode/basenode.old
