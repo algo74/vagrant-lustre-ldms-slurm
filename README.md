@@ -6,7 +6,258 @@
 Description
 -----------
 
-In addition to the Lustre servers, installs a cluster of clients
+This repository contains Vagrant scripts and other scripts and configuration files
+needed to install a cluster with a Lustre file system, a control node, and several compute nodes.
+
+The control and compute nodes contain installations of LDMS (with SOS and NumSOS) and the custom version of Slurm.
+
+A directory `xch` is mounted inside the nodes. The “MiddleMan Service” is located there (in directory `py-sim-serv`), as a git submodule. Most of the configuration files, job scripts, etc. are in `xch/scripts` directory. The scripts that run the tests are in the directory `xch/scripts/workloads`. See more details below.
+
+To change Slurm, `Vagrantfile` of the “basenode” can be changed, or (to save time) Slurm can be recompiled inside the basenode VM and the basenode box re-created. After that the control and compute nodes must be recreated. The process is described below in more details.  
+
+Recompiling LDMS also require change of the basenode, but changing the configuration of samplers and aggregators can be done in `xch/scripts/ldms`. 
+
+-------------
+Quick Setup
+-------------
+
+Lustre servers can be created without any preparation, but the control and compute nodes use a vagrant box (called "basenode"), that should be created beforehand.
+This way, the basenode is created once instead of re-creating it for each node separately.
+
+## Lustre servers
+
+Lustre servers can be started all-in-one with 
+```
+vagrant up mds01 mds02 oss01 oss02
+```
+or with the script
+```
+./up_lustre.sh
+```
+
+> If an error occured during creating of a virtual machine, the machine should be re-created like this (example of re-creating mds01):
+
+> ```
+vagrant destroy mds01 -f && vagrant up mds01
+> ```
+
+> Running `vagrant up` without destroying the virtual machine first may result in some of the "provisions" not applied.
+
+The Lustre system usually is not operational when the servers are just created. It starts working properly after reloading the servers at least once. To reload the Lustre servers use
+```
+vagrant reload mds01 mds02 oss01 oss02
+```
+or with the script
+```
+./reload_lustre.sh
+```
+>  Sometimes the Luster system does not start properly (or does not operate for some other reasons). 
+> The sub-cluster can be restarted then using the same command as above
+
+## Control and compute nodes
+
+### Making initial basenode
+
+```bash
+cd basenode
+vagrant up
+vagrant package --output basenode
+cd ..
+```
+
+### Creating control and compute nodes
+
+After the basenode is created, create other nodes as usuall:
+```bash
+# creating control node
+vagrant up cl0
+# creating all 8 compute nodes
+vagrant up /cl[1-8]/ 
+```
+
+> The range can be changed if less nodes are desired (eg. `/cl[1-2]/`) 
+
+> If the “checking lustre” procedure at the end of the "up" process does not finish properly, try restarting the node and, if that doesn’t help, restart the Lustre nodes.
+
+
+
+----------------
+Running test
+----------------
+
+The following is a typical workflow, assuming that all nodes are started and the Lustre file system has been tested. 
+
+* Start MiddleMan (pysimserv) in a terminal on cl0 ssh
+
+    ```
+    sudo /xch/scripts/mdman.sh
+    ```
+
+    * use a separate terminal as it doesn't exit
+
+* Run a workload scirpt in a terminal on cl0 ssh.
+  For example:
+
+    ```
+    /xch/scripts/workloads/test-caseN.sh
+    ```
+
+* When the test is completed:
+
+    * Stop MiddleMan
+
+    * Check for errors during  execution of jobs
+
+    * Copy/rename results files in xch/results
+
+    * Reset the MiddleMan database if needed
+
+
+
+* When no more tests are needed:
+
+    * Remove unneeded LDMS data from cl0
+
+    * Halt VMs
+
+    * Remove unneeded logs from `xch`
+
+
+## MiddleMan services (py-sim-serv)
+
+```
+sudo /xch/scripts/mdman.sh
+```
+
+This command is better run in a separate terminal as the script doesn’t exit while the service runs. The logs will be printed to the terminal.
+
+### Implementation details
+
+`xch/py-sim-serv` is a _git submodule_. The behavior of git with submodules could be counterintuitive. For instance, git commands while in this directory would affect the repository that contains the submodule. Please consult **git submodule** documentation for details.
+
+`py-sim-serv` contains an older version (`pysimserv`) for Python 2 and a newer vesrion (`pysimserv3`) for Python 3. We now use `pysimserv3`.
+
+The database for the MiddleMan services is located in `/LDMS_data/SOS/results` on cl0.
+
+
+### Results analysis
+
+`xch/py-sim-serv/analysis3` is Python 3 version of an example script that can be used to analyze the data from `xch/results`.
+`xch/py-sim-serv/requirements_analysis.txt` contains the Python requirements needed to run the analysis.
+
+-------------
+Structure of control/compute nodes
+-------------
+
+## Basenode
+
+```
+/
+|
+...
+|
++--source
+|  |
+|  +--ldms
+|  |  |
+|  |  +--ovis       (LDMS git repository)
+|  |  |
+|  |  +--sos        (SOS git repository)
+|  |  |
+|  |  +--numsos     (NumSOS git repository)
+|  |
+|  +--slurm
+|     |
+|     +--slurm-ldms (our Slurm git repository)
+|
++--usr/local/ovis   (location of LDMS/SOS/NumSOS install)
+|  
++--var/spool/slurmd (a directory for Slurm)
+|
++--lustre           (mount point for Lustre file system)
+```
+
+## Control node
+```
+/
+|
+...
+|
++--run/pid          (a directory for LDMS)
+|
++--lustre           (mount point for Lustre file system)
+|  |
+|  +--all           (working directory for jobs)
+|
++--LDMS_data        (location of LDMS storage data)
+|
++--xch              (shared directory mounted by Vagrant)
+   |
+   +--scripts       (scripts and configurations)
+   |  |
+   |  +--ldms
+   |  |
+   |  +--slurm
+   |  |
+   |  +--jobs
+   |  |
+   |  +--workloads
+   |
+   +--logs          (location where logs are written)
+   |  |
+   |  +--ldms
+   |  |
+   |  +--slurm
+   |  |
+   |  +--jobs
+   |
+   +--py-sim-serv   (git repository (submodule) in the shared directory)
+   |
+   +--results       (location where py-sim-serv writes its "results")
+
+```
+
+> Compute node has similar structure, but without `/LDMS_data`
+
+
+
+-------------
+Cookbook
+-------------
+
+
+### TODO
+
+Checking Lustre on nodes 
+
+$ vagrant ssh -c /xch/check_lustre.sh cl0 
+
+$ ./ssh_clx.sh 8  /xch/check_lustre.sh 
+
+The second command uses the script that allows running same command on several compute nodes (in this case on nodes cl1-cl8). The range is set by the first argument, the rest will be passed as the command to the node (the script may have to be changed if it doesn’t work as expected with more than two arguments). 
+
+If the name of the Lustre file system does not appear after “checking lustre” (or if it appears empty when it is not), something is not right. Try restarting the node (or restart the Lustre nodes if it is not showing on all nodes and/or restarting nodes doesn’t help). 
+
+
+Cleaning logs 
+
+alex@damian-MacPro:~/vc/vagrant-lustre-tutorial$ rm xch/logs/* 
+
+This will remove all log files created by the jobs that has run on the cluster. 
+
+
+Cleaning node 
+
+$ vagrant ssh -c /xch/clear_node.sh cl0 
+
+$ vagrant reload cl0 
+
+The first command will remove all files that contain the “state” of LDMS and SOS (including LDMS logs), as well as remove files in Lustre file system that were created by the jobs that have run on the system. Note that the latter will have effect on all nodes. The second command restarts the node. 
+
+Note that this may not delete the state of “MiddleMan Services”. See below how to delete it. 
+
+
+# TODO
 
 
 -------------------
