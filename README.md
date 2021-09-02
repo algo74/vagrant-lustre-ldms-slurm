@@ -408,7 +408,8 @@ vagrant destroy -f /cl[0-8]/
 
 ## Commiting the change to the repository
 
-Edit `basenode/Vagrantfile` to reflect the new branch or commit id of Slurm/LDMS/SOS/NumSOS source.
+Edit `basenode/build_scripts/install_slurm.sh` to reflect the new branch or commit id of Slurm. 
+Similarly, for LDMS/SOS/NumSOS, edit `basenode/build_scripts/install_ldms.sh`.
 
 
 -------------------
