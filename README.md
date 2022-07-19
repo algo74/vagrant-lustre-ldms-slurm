@@ -28,7 +28,7 @@ curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
 sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" 
 sudo apt-get update && sudo apt-get install vagrant 
 sudo apt install git 
-git clone https://<token>@github.com/algo74/vagrant-lustre-ldms-slurm 
+git clone --recurse-submodules https://<token>@github.com/algo74/vagrant-lustre-ldms-slurm 
 ```
 
 Note than not all the steps above may be needed if, for example, git is already installed.
@@ -408,7 +408,8 @@ vagrant destroy -f /cl[0-8]/
 
 ## Commiting the change to the repository
 
-Edit `basenode/Vagrantfile` to reflect the new branch or commit id of Slurm/LDMS/SOS/NumSOS source.
+Edit `basenode/build_scripts/install_slurm.sh` to reflect the new branch or commit id of Slurm. 
+Similarly, for LDMS/SOS/NumSOS, edit `basenode/build_scripts/install_ldms.sh`.
 
 
 -------------------
