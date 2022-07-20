@@ -3,6 +3,7 @@
 
 cur_dir = File.dirname(File.expand_path(__FILE__))
 
+
 Vagrant.configure(2) do |config|
   # mds01
   config.vm.define "mds01" do |mds01|
@@ -19,12 +20,12 @@ Vagrant.configure(2) do |config|
       v.cpus = 1
     end
     mds01.vm.provider "virtualbox" do |vb|
-      if !File.exist?("mgt01.vdi")
+      if !File.exist?("%s/%s" % [cur_dir,"mgt01.vdi"])
         vb.customize ["createhd", "--filename", "mgt01.vdi", "--size", 1024, "--variant", "Fixed"]
         vb.customize ["modifyhd", "mgt01.vdi", "--type", "shareable"]
       end
       vb.customize ["storageattach", :id, "--storagectl", "IDE Controller", "--port", 0, "--device", 1, "--type", "hdd", "--medium", "mgt01.vdi"]
-      if !File.exist?("mdt01.vdi")
+      if !File.exist?("%s/%s" % [cur_dir,"mdt01.vdi"])
         vb.customize ["createhd", "--filename", "mdt01.vdi", "--size", 1024, "--variant", "Fixed"]
         vb.customize ["modifyhd", "mdt01.vdi", "--type", "shareable"]
       end
@@ -44,12 +45,12 @@ Vagrant.configure(2) do |config|
       v.cpus = 1
     end
     mds02.vm.provider "virtualbox" do |vb|
-      if !File.exist?("mgt01.vdi")
+      if !File.exist?("%s/%s" % [cur_dir,"mgt01.vdi"])
         vb.customize ["createhd", "--filename", "mgt01.vdi", "--size", 1024, "--variant", "Fixed"]
         vb.customize ["modifyhd", "mgt01.vdi", "--type", "shareable"]
       end
       vb.customize ["storageattach", :id, "--storagectl", "IDE Controller", "--port", 0, "--device", 1, "--type", "hdd", "--medium", "mgt01.vdi"]
-      if !File.exist?("mdt01.vdi")
+      if !File.exist?("%s/%s" % [cur_dir,"mdt01.vdi"])
         vb.customize ["createhd", "--filename", "mdt01.vdi", "--size", 1024, "--variant", "Fixed"]
         vb.customize ["modifyhd", "mdt01.vdi", "--type", "shareable"]
       end
@@ -173,7 +174,8 @@ cat <<'END' > /etc/yum.repos.d/CentOS-Base.repo
 name=CentOS-$releasever - Base
 #mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=os&infra=$infra
 #baseurl=http://mirror.centos.org/centos/$releasever/os/$basearch/
-baseurl=http://vault.centos.org/6.10/os/$basearch/
+#baseurl=http://vault.centos.org/6.10/os/$basearch/
+baseurl=http://linuxsoft.cern.ch/centos-vault/6.10/os/$basearch/
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
 
@@ -181,7 +183,8 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
 name=CentOS-$releasever - Updates
 #mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=updates&infra=$infra
 #baseurl=http://mirror.centos.org/centos/$releasever/updates/$basearch/
-baseurl=https://vault.centos.org/6.10/updates/$basearch/
+#baseurl=https://vault.centos.org/6.10/updates/$basearch/
+baseurl=http://linuxsoft.cern.ch/centos-vault/6.10/updates/$basearch/
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
 
@@ -189,7 +192,8 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
 name=CentOS-$releasever - Extras
 #mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=extras&infra=$infra
 #baseurl=http://mirror.centos.org/centos/$releasever/extras/$basearch/
-baseurl=https://vault.centos.org/6.10/extras/$basearch/
+#baseurl=https://vault.centos.org/6.10/extras/$basearch/
+baseurl=http://linuxsoft.cern.ch/centos-vault/6.10/extras/$basearch/
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
 END
