@@ -43,14 +43,13 @@ This way, the basenode is created once instead of re-creating it for each node s
 
 ## Lustre servers
 
-Lustre servers can be started all-in-one with 
-```
-vagrant up mds01 mds02 oss01 oss02
-```
+Lustre servers can be started one-by-one
 or with the script
 ```
 ./up_lustre.sh
 ```
+
+> Starting all servers together like `vagrant up mds01 mds02 oss01 oss02` may cause error because Vagrant may want to recreate existing disk volumes.
 
 > If an error occured during creating of a virtual machine, the machine should be re-created like this (example of re-creating mds01):
 
