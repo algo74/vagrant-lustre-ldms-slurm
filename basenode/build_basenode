@@ -7,5 +7,5 @@ set -xe
 
 vagrant box remove basenode
 rm basenode.old || echo "Old basenode was not deleted"
-mv basenode basenode.old || echo "Nothing to move"
+mv basenode basenode.old 
 vagrant package --output basenode
