@@ -91,7 +91,11 @@ vagrant up cl0
 vagrant up /cl[1-8]/ 
 ```
 
-> The range can be changed if less nodes are desired (eg. `/cl[1-2]/`) 
+However, nodes needs to be restarted after they were created to make Lustre work. 
+It can be done with the help of `up_machine.sh` script, for instance:
+```bash
+./up_machine cl{0-8}
+```
 
 > If the “checking lustre” procedure at the end of the "up" process does not finish properly, try restarting the node and, if that doesn’t help, restart the Lustre nodes.
 
