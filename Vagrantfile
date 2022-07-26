@@ -488,12 +488,12 @@ SCRIPT
 
   config.vm.define "cl0" do |client|
     client.vm.provision :shell, :inline => "pip3 install -r /xch/py-sim-serv/requirements.txt"
-    client.vm.provision :shell, :path => "config/start_control.sh", run: "always"
+    client.vm.provision :shell, :path => "xch/scripts/start_control.sh", run: "always"
   end
 
   (1..8).each do |c_idx|
     config.vm.define "cl#{c_idx}" do |client|
-      client.vm.provision :shell, :path => "config/start_compute.sh", run: "always"
+      client.vm.provision :shell, :path => "xch/scripts/start_compute.sh", run: "always"
     end
   end
   # ==============================================================================================================
