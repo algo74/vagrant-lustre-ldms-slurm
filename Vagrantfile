@@ -487,6 +487,7 @@ SCRIPT
   end
 
   config.vm.define "cl0" do |client|
+    client.vm.provision :shell, :inline => "pip3 install -r /xch/py-sim-serv/requirements.txt"
     client.vm.provision :shell, :path => "config/start_control.sh", run: "always"
   end
 
