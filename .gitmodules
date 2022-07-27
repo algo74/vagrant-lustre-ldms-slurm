@@ -4,6 +4,8 @@
 [submodule "xch/canary/canary22"]
 	path = xch/canary/canary22
 	url = git@github.com:algo74/canary22.git
+        branch=main
 [submodule "xch/canary/canary_script"]
 	path = xch/canary/canary_script
 	url = git@github.com:algo74/canary_script.git
+        branch=main
