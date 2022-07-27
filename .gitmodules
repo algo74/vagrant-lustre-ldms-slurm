@@ -1,3 +1,9 @@
 [submodule "xch/py-sim-serv"]
 	path = xch/py-sim-serv
 	url = git@github.com:algo74/py-sim-serv.git
+[submodule "xch/canary/canary22"]
+	path = xch/canary/canary22
+	url = git@github.com:algo74/canary22.git
+[submodule "xch/canary/canary_script"]
+	path = xch/canary/canary_script
+	url = git@github.com:algo74/canary_script.git
