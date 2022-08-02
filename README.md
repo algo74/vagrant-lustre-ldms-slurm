@@ -229,7 +229,7 @@ Logs are stored outside the VMs, but cleaning them periodically is also a good i
 ### Cleaning LDMS data 
 
 ```
-vagrant ssh -c /xch/clear_node.sh cl0 
+vagrant ssh -c /xch/scripts/clear_node.sh cl0 
 ```
 
 This command will stop Slurm and LDMS. They will resume on the next node startup. The node could be halted if not needed or, if needed right away, restarted like this:
