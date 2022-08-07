@@ -1,5 +1,8 @@
 .vagrant
 *.vdi
+*.csv
+*.pid
+*.log
 
 xch/results/*
 xch/py-sim-serv/*
