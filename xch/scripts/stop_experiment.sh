@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+# set -e
 PID_PATH=/xch/logs/experiment.pid
 PID=$(<${PID_PATH})
 
