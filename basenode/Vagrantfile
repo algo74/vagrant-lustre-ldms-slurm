@@ -1,171 +1,57 @@
 # -*- mode: ruby -*-
-# vi: set ft=ruby :
+# vi: ft=ruby:shiftwidth=2 
 
+cur_dir = File.dirname(File.dirname(File.expand_path(__FILE__)))
+load "%s/%s" % [cur_dir,"common_vars.rb"]
 
-# changing vagrant UID and GID
-$fix_vagrant_user = <<SCRIPT
-echo "Fixing vagrant UID and GID (1000 -> 500)"
+VB_VERSION = /[0-9]+\.[0-9]+\.[0-9]+/.match(`VBoxManage --version`)
+
+$install_guest_addition = <<SCRIPT
 set -xe
-chown -R 500:500 /home/vagrant
-# since it is just a VM, we can be careless
-sed -i 's/1000/500/g' /etc/group
-sed -i 's/1000/500/g' /etc/passwd
-#cat /etc/passwd
-find / -path /proc -prune -false -o -user 1000 | xargs chown -h 500
-find / -path /proc -prune -false -o -group 1000 | xargs chgrp -h 500
-SCRIPT
-
-# common settings on all machines
-$etc_hosts = <<SCRIPT
-echo etc_hosts
-set -xe
-cat <<END > /etc/hosts
-127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
-::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
-10.0.4.6 mds01
-10.0.4.7 mds02
-10.0.4.8 oss01
-10.0.4.9 oss02
-10.0.4.20 centos6
-10.0.4.30 centos7
-10.0.4.50 cl0
-10.0.4.51 cl1
-10.0.4.52 cl2
-10.0.4.53 cl3
-10.0.4.54 cl4
-10.0.4.55 cl5
-10.0.4.56 cl6
-10.0.4.57 cl7
-10.0.4.58 cl8
-END
-SCRIPT
-
-# [Errno 14] problem making ssl connection
-$yum_problem_making_ssl_connection = <<SCRIPT
-echo yum_problem_making_ssl_connection
-set -xe
-# [Errno 14] problem making ssl connection
-yum -y update nss* ca-certificates pycurl
-yum clean all
-SCRIPT
-
-$epel7 = <<SCRIPT
-set -xe
-yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-SCRIPT
-
-$lustre_client_rhel = <<SCRIPT
-echo lustre_client_rhel
-set -xe
-yum clean all
-cat <<'END' > /etc/yum.repos.d/lustre_client.repo
-[lustre-client]
-name=CentOS-$releasever - Lustre client
-minrate=0
-timeout=300
-baseurl=https://downloads.whamcloud.com/public/lustre/lustre-2.8.0/el$releasever/client/
-#baseurl=https://downloads.hpdd.intel.com/public/lustre/lustre-2.8.0/el$releasever/client/
-# https://jira.hpdd.intel.com/browse/LU-1354
-gpgcheck=0
-END
-SCRIPT
-
-# CentOS vault (specific version of the kernel needed by lustre)
-$centos_vault = <<SCRIPT
-echo centos_vault
-set -xe
-RELEASE=$1
-yum clean all
-cat <<END > /etc/yum.repos.d/vault.repo
-[vault]
-name=CentOS-$RELEASE - vault
-baseurl=http://vault.centos.org/$RELEASE/os/\\$basearch/
-gpgcheck=1
-[vault-updates]
-name=CentOS-$RELEASE - vault-updates
-baseurl=http://vault.centos.org/$RELEASE/updates/\\$basearch/
-gpgcheck=1
-END
-SCRIPT
-
-$kernel_version_lock = <<SCRIPT
-echo kernel_version_lock
-set -xe
-yum versionlock add kernel
-yum versionlock add kernel-firmware
-yum versionlock add kernel-devel
-yum versionlock add kernel-headers
-SCRIPT
-
-# lustre mounts
-$etc_fstab_lustre = <<SCRIPT
-echo etc_fstab_lustre
-set -xe
-dev=$1
-mnt=$2
-options=$3
-echo ${dev}, ${mnt}, ${options}
-mkdir -p ${mnt}
-cat <<END >> /etc/fstab
-${dev}        ${mnt}        lustre  ${options}     0       0
-END
-SCRIPT
-
-$systemctl_stop_firewalld = <<SCRIPT
-echo systemctl_stop_firewalld
-set -xe
-systemctl stop firewalld.service
-SCRIPT
-
-$setenforce_0 = <<SCRIPT
-echo setenforce_0
-set -xe
-if test `getenforce` = 'Enforcing'; then setenforce 0; fi
-#sed -Ei 's/^SELINUX=.*/SELINUX=Permissive/' /etc/selinux/config
+curl -o VBoxGuestAdditions.iso http://download.virtualbox.org/virtualbox/#{VB_VERSION}/VBoxGuestAdditions_#{VB_VERSION}.iso
+mkdir /media/VBoxGuestAdditions
+mount -o loop,ro VBoxGuestAdditions.iso /media/VBoxGuestAdditions
+sh /media/VBoxGuestAdditions/VBoxLinuxAdditions.run
+rm VBoxGuestAdditions.iso
+sudo umount /media/VBoxGuestAdditions
+sudo rmdir /media/VBoxGuestAdditions
 SCRIPT
 
 Vagrant.configure("2") do |config|  
-
-  config.vm.box = "puppetlabs/centos-7.2-64-nocm"
-  config.vm.box_url = 'puppetlabs/centos-7.2-64-nocm'
-  config.vm.network "private_network", ip: "10.0.4.99"
+  config.vm.box = "centos/7"
+  config.vm.box_version = "2004.01"
+  config.vm.box_url = 'centos/7'  
   config.vm.provider "virtualbox" do |v|
     v.memory = 1024
     v.cpus = 1
   end
   
-  config.vm.provision :shell do |s|
-    s.inline = $fix_vagrant_user
-    s.reset = true
+  config.vm.provision :shell, name: "useradd slurm", :inline => "useradd -u 1001 slurm" 
+  config.vm.provision :shell, name: "hostname", :inline => "hostname basenode", run: "always"
+  config.vm.provision :shell, name: "etc_hosts", :inline => $etc_hosts
+  config.vm.provision :shell, name: "yum_problem_making_ssl_connection", :inline => $yum_problem_making_ssl_connection
+  config.vm.provision :shell, name: "epel7", :inline => $epel7
+  config.vm.provision :shell, name: "create_repo_lustre_client", :inline => $create_repo_lustre_client
+  config.vm.provision :shell, name: "install perl before installing kernel", :inline => "yum -y install perl"
+  config.vm.provision :shell, name: "install_lustre_client_kernel", :inline => $install_lustre_client_kernel
+  config.vm.provision :shell, name: "install yum-plugin-versionlock", :inline => "yum -y install yum-plugin-versionlock"
+  config.vm.provision :shell, name: "kernel_version_lock", :inline => $kernel_version_lock
+  config.vm.provision :shell, name: "install dev tools", :path => "build_scripts/install_dev_tools.sh"
+  config.vm.provision :shell do |shell|
+          shell.name = 'reboot'
+          shell.privileged = true
+          shell.inline = 'echo rebooting'
+          shell.reboot = true
   end
-  config.vm.provision :shell, :inline => "useradd -u 1001 slurm"
+  config.vm.provision :shell, name: "install guest addition", :inline => $install_guest_addition 
+  config.vm.provision :shell, name: "install lustre-client", :inline => "yum -y --nogpgcheck --enablerepo=lustre-client install lustre-client kmod-lustre-client"
+  config.vm.provision :shell, name: "versionlock lustre-client", :inline => "yum versionlock lustre-client"
+  config.vm.provision :shell, name: "mkdir -p /lustre", :inline => "mkdir -p /lustre"
 
-  config.vm.provision :shell, :inline => "hostname basenode", run: "always"
-  config.vm.provision :shell, :inline => $etc_hosts
-  config.vm.provision :shell, :inline => $yum_problem_making_ssl_connection
-  config.vm.provision :shell, :inline => $epel7
-  config.vm.provision :shell, :inline => $lustre_client_rhel
-  config.vm.provision :shell, :inline => "yum -y install yum-plugin-versionlock"
-  # lock the default kernel version
-  config.vm.provision "shell" do |s|
-    s.inline = $centos_vault
-    # kernel-3.10.0_327.3.1.el7.x86_64 needed by lustre-2.8.0 in CentOS-7.2.1511
-    s.args   = ["7.2.1511"]
-  end
-  config.vm.provision :shell, :inline => $kernel_version_lock
-  config.vm.provision :shell, :inline => "yum -y install lustre-client"
-  config.vm.provision :shell, :inline => "yum versionlock lustre-client"
-  config.vm.provision "shell" do |s|
-    s.inline = $etc_fstab_lustre
-    s.args   = ["mds01@tcp0:mds02@tcp0:/testfs", "/lustre", "defaults,_netdev,localflock,user_xattr"]
-  end
-  # https://github.com/aidanns/vagrant-reload/issues/6
-  #config.vm.provision :reload
-  #config.vm.provision :shell, :inline => "reboot"  # this gives exit 1
+
   config.vm.provision :shell, :inline => $systemctl_stop_firewalld, run: "always"
   config.vm.provision :shell, :inline => $setenforce_0, run: "always"
   
-  config.vm.provision :shell, :path => "build_scripts/install_dev_tools.sh"
   config.vm.provision :shell, :inline => "mkdir /source; chmod 777 /source"
   config.vm.provision :shell, privileged: false, :path => "build_scripts/install_ldms.sh"
   config.vm.provision :shell, privileged: false, :path => "build_scripts/install_slurm.sh"
