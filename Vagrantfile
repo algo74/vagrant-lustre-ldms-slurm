@@ -118,6 +118,7 @@ Vagrant.configure(2) do |config|
   end
 
   config.vm.define "mds01" do |mds01|
+    mds01.vm.provision :shell, name: "hostname", :inline => "hostname mds01", run: "always"
     # configure lustre management server
     mds01.vm.provision :shell, :inline => "mkfs.lustre --backfstype=ldiskfs --reformat --fsname=testfs --mgs --mgsnode=mds01@tcp0 /dev/sdb"
     mds01.vm.provision :shell, name: "mkdir -p /lustre/mgt01", :inline => "mkdir -p /lustre/mgt01"
@@ -129,6 +130,7 @@ Vagrant.configure(2) do |config|
   end
   
   config.vm.define "oss01" do |oss01|
+    oss01.vm.provision :shell, name: "hostname", :inline => "hostname oss01", run: "always"
     # configure lustre object storage targets
     oss01.vm.provision :shell, :inline => "mkfs.lustre --backfstype=ldiskfs --reformat --fsname=testfs --ost --index=0 --mgsnode=mds01@tcp0 /dev/sdb"
     oss01.vm.provision :shell, name: "mkdir -p /lustre/oss01", :inline => "mkdir -p /lustre/oss01"
@@ -136,6 +138,7 @@ Vagrant.configure(2) do |config|
   end
 
   config.vm.define "oss02" do |oss02|
+    oss02.vm.provision :shell, name: "hostname", :inline => "hostname oss02", run: "always"
     # configure lustre object storage targets
     oss02.vm.provision :shell, :inline => "mkfs.lustre --backfstype=ldiskfs --reformat --fsname=testfs --ost --index=1 --mgsnode=mds01@tcp0 /dev/sdb"
     oss02.vm.provision :shell, name: "mkdir -p /lustre/oss02", :inline => "mkdir -p /lustre/oss02"
