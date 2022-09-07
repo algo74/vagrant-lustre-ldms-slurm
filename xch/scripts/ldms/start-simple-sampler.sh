@@ -1,4 +1,5 @@
 #!/bin/bash
+set -xe
 
 
 SCRIPT_PATH=/xch/scripts/ldms

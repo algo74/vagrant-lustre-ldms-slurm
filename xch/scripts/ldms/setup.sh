@@ -7,7 +7,7 @@ if [ -z "$HOSTINDEX" ] ; then
   
   export LD_LIBRARY_PATH=$TOP/lib/:$TOP/lib64:$LD_LIBRARY_PATH
   export LDMSD_PLUGIN_LIBPATH=$TOP/lib/ovis-ldms/ 
-  export ZAP_LIBPATH=$TOP/lib/ovis-lib/ 
+  export ZAP_LIBPATH=$TOP/lib/ovis-ldms/ 
   export PATH=$TOP/sbin:$TOP/bin:$PATH 
   export PYTHONPATH=$TOP/lib/python3.6/site-packages/:$PYTHONPATH
 

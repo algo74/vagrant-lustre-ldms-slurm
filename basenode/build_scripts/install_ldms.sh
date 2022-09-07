@@ -9,10 +9,10 @@ cd /source/ldms
 
 # SOS
 # getting src
-git clone --single-branch --branch SOS-4 https://github.com/ovis-hpc/sos
+git clone --single-branch --branch SOS-6 https://github.com/ovis-hpc/sos
 cd sos
 # freezing to the commit we know works
-git checkout 3177b4c7149e0ac4380c89f0c2248717ccac2066
+git checkout f91f14136c1150311f5a42caa0b60f1a6cbdeb92
 # building
 ./autogen.sh 
 mkdir build 
@@ -27,7 +27,7 @@ cd ../..
 git clone --single-branch --branch OVIS-4 https://github.com/ovis-hpc/ovis
 cd ovis
 # freezing to the commit we know works
-git checkout a74b4696115e0da371fb4f633c9cdc3e072501a9
+git checkout 70ea2017de535bdb42bce3174c442280183efd08
 # building
 ./autogen.sh
 mkdir build

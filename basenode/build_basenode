@@ -5,7 +5,8 @@ cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
 
 set -xe
 
-vagrant box remove basenode
+BN_NAME="$(dirname -- "$(pwd)")/basenode"
+vagrant box remove $BN_NAME
 rm basenode.old || echo "Old basenode was not deleted"
 mv basenode basenode.old 
 vagrant package --output basenode

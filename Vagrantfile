@@ -176,6 +176,7 @@ Vagrant.configure(2) do |config|
 
   config.vm.define "cl0" do |client|
     client.vm.provision :shell, :inline => "pip3 install -r /xch/py-sim-serv/requirements.txt"
+    client.vm.provision :shell, name: "mkdir -p /LDMS_data/SOS/sos1/", :inline => "mkdir -p /LDMS_data/SOS/sos1/"
     client.vm.provision :shell, :path => "xch/scripts/start_control.sh", run: "always"
   end
 
