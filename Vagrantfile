@@ -154,6 +154,8 @@ Vagrant.configure(2) do |config|
       client.vm.box_url = "%s/basenode/%s" % [cur_dir,"basenode"]
       client.vm.synced_folder "xch", "/xch"
       
+      client.vm.synced_folder ".", "/vagrant", disabled: true
+
       client.vm.network "private_network", ip: "10.0.4.5#{c_idx}"
       client.vm.provider "virtualbox" do |v|
         v.memory = 1024
@@ -168,9 +170,8 @@ Vagrant.configure(2) do |config|
       client.vm.provision :shell, name: "modprobe lnet", :inline => "modprobe lnet", run: "always"
       client.vm.provision :shell, name: "lctl network up", :inline => "lctl network up", run: "always"
       client.vm.provision :shell, name: "mount /lustre", :inline => "mount -t lustre -o defaults,_netdev,user_xattr mds01@tcp0:/testfs /lustre", run: "always"
-      client.vm.provision :shell, 
-        inline: "cp /vagrant/config/envvars.sh /etc/profile.d/zzz_99_envvars.sh"
-      client.vm.provision :shell, path: "config/envvars.sh"
+      client.vm.provision :shell, name: "set envvars",
+        inline: "cp /xch/config/envvars.sh /etc/profile.d/zzz_99_envvars.sh && /xch/config/envvars.sh"
     end
   end
 
