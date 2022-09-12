@@ -158,7 +158,7 @@ Vagrant.configure(2) do |config|
 
       client.vm.network "private_network", ip: "10.0.4.5#{c_idx}"
       client.vm.provider "virtualbox" do |v|
-        v.memory = 1024
+        v.memory = c_idx == 0 ? 4096 : 1024
         v.cpus = 1
       end
       client.vm.provision :shell, :inline => "hostname cl#{c_idx}", run: "always"
