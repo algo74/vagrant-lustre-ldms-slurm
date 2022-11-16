@@ -7,4 +7,6 @@ yum -y install git libevent libevent-devel autogen doxygen gettext swig openssl-
  
 yum -y groupinstall "Development Tools" 
 
+yum -y install gtk2-devel
+
 pip3 install Cython numpy
