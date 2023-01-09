@@ -28,6 +28,7 @@ curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
 sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" 
 sudo apt-get update && sudo apt-get install vagrant 
 sudo apt install git 
+vagrant plugin install vagrant_reboot_linux
 git clone --recurse-submodules https://<token>@github.com/algo74/vagrant-lustre-ldms-slurm 
 ```
 
@@ -49,7 +50,7 @@ or with the script
 ./up_lustre.sh
 ```
 
-> Starting all servers together like `vagrant up mds01 mds02 oss01 oss02` may cause error because Vagrant may want to recreate existing disk volumes.
+> Starting all servers together like `vagrant up mds01 oss01 oss02` may cause error because Vagrant may want to recreate existing disk volumes.
 
 > If an error occured during creating of a virtual machine, the machine should be re-created like this (example of re-creating mds01):
 
@@ -61,7 +62,7 @@ vagrant destroy mds01 -f && vagrant up mds01
 
 The Lustre system usually is not operational when the servers are just created. It starts working properly after reloading the servers at least once. To reload the Lustre servers use
 ```
-vagrant reload mds01 mds02 oss01 oss02
+vagrant reload mds01 oss01 oss02
 ```
 or with the script
 ```
