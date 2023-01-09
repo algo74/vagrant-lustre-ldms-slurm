@@ -1,0 +1,7 @@
+{
+  "server": {
+    "name": "localhost",
+    "port": 9999
+  },
+  "backfill_type": "TWO_GROUP"
+}

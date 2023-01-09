@@ -10,7 +10,8 @@ cd /source/slurm
 git clone https://github.com/algo74/slurm-ldms.git
 cd slurm-ldms
 # TODO: checkout the desired commit
-
+git checkout workload-adaptive-AG
+autoreconf
 ./configure --enable-debug  --enable-multiple-slurmd 
 make 
 sudo make install 

@@ -9,3 +9,7 @@
 	path = xch/canary/canary_script
 	url = git@github.com:algo74/canary_script.git
         branch=main
+[submodule "xch/sevi"]
+	path = xch/sevi
+	url = git@github.com:algo74/slurm_epilog_variety_id.git
+	branch = config_file
