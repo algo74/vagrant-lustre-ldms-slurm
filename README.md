@@ -51,13 +51,13 @@ or with the script
 ```
 
 > Starting all servers together like `vagrant up mds01 oss01 oss02` may cause error because Vagrant may want to recreate existing disk volumes.
-
+>
 > If an error occured during creating of a virtual machine, the machine should be re-created like this (example of re-creating mds01):
-
+>
 > ```
-vagrant destroy mds01 -f && vagrant up mds01
+> vagrant destroy mds01 -f && vagrant up mds01
 > ```
-
+>
 > Running `vagrant up` after the failure without destroying the virtual machine first may result in some of the "provisions" not applied.
 
 The Lustre system usually is not operational when the servers are just created. It starts working properly after reloading the servers at least once. To reload the Lustre servers use
