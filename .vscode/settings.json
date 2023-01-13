@@ -1,0 +1,8 @@
+{
+  "logViewer.watch": [
+    {
+      "title": "Slurm logs",
+      "pattern": "/home/alex/vc/vvlt/xch/logs/slurm/*"
+    }
+  ]
+}

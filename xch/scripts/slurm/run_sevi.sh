@@ -10,8 +10,11 @@ date &> ${LOGFILE}
 # 
 # export VINSNL_SERVER="localhost:9996" 
 
-echo "directory: $PWD" &>> ${LOGFILE}
 whoami &>> ${LOGFILE}
-echo "using server: $VINSNL_SERVER" &>> ${LOGFILE}
-/xch/scripts/slurm/sevi &>> ${LOGFILE}
+echo "directory: $PWD" &>> ${LOGFILE}
+## 
+# echo "using config file: $VINSNL_CONFIG" &>> ${LOGFILE}
+
+## $VINSNL_CONFIG is not propogated by Slurm, so configure the address from CLI manually
+/xch/sevi/build/sevi -c /xch/scripts/slurm/vinsnl.json &>> ${LOGFILE}
 
