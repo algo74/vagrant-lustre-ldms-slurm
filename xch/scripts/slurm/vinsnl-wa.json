@@ -3,5 +3,6 @@
     "name": "localhost",
     "port": 9999
   },
+  "track_nodes": true,
   "backfill_type": "TWO_GROUP"
 }

@@ -3,5 +3,7 @@
     "name": "localhost",
     "port": 9999
   },
-  "backfill_type": "AWARE"
+  "lustre_log_path": "/xch/logs/slurm/lustre_log.csv",
+  "track_nodes": true,
+  "backfill_type": "TWO_GROUP"
 }
