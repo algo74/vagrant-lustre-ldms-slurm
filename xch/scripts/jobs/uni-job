@@ -1,15 +1,20 @@
 #!/bin/sh
-# ls /proc/fs/lustre/llite
+# This job wrtites segments of 1M blocks and waits rangomly before and after
+# usage: $0 <segments-in-block> <repeat> <extra-sleep-time>
 TOTAL=${3:-0} # delay
 FRONT=$((TOTAL == 0 ? 0 : RANDOM % TOTAL))
 END=$((TOTAL - FRONT))
 ls /lustre/all/
+echo "sleeping $FRONT seconds"
+sleep $FRONT
 counter=1
 while [ $counter -le $2 ] 
 do
   echo $counter
-  dd if=/dev/zero of=/lustre/all/test_$HOSTNAME bs=1M count=$1 oflag=direct,sync
+  dd if=/dev/zero of=/lustre/all/test_$HOSTNAME bs=1M count=${1} oflag=direct,sync
   ((counter++))
 done
+echo "sleeping $END seconds"
+sleep $END
 echo All done
 
