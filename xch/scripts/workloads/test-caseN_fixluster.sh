@@ -11,9 +11,9 @@ N_SLEEP=${4:-4}
 counter=1
 while [ $counter -le $PRE ] 
 do
-  sbatch -N 1 --time=30 /xch/scripts/jobs/overfile-batch
+  sbatch -N 1 --licenses=lustre:2000 --time=30 /xch/scripts/jobs/overfile-batch
   source $DIR/slurm-wait-till-done.sh
-  sbatch -N 1 --time=40 /xch/scripts/jobs/sleep-batch
+  sbatch -N 1 --licenses=lustre:0 --time=40 /xch/scripts/jobs/sleep-batch
   source $DIR/slurm-wait-till-done.sh
   echo "  iteration $counter complete"
   ((counter++))
@@ -30,14 +30,14 @@ do
   while [ $index_i -le $N_WRITE ] 
   do
     sbatch -N 1 --licenses=lustre:2000 --time=30 /xch/scripts/jobs/overfile-batch
-    sleep 1
+    sleep 10
     ((index_i++))
   done
   index_i=1
   while [ $index_i -le $N_SLEEP ] 
   do
-    sbatch -N 1 --time=40 /xch/scripts/jobs/sleep-batch
-    sleep 1
+    sbatch -N 1 --licenses=lustre:0 --time=40 /xch/scripts/jobs/sleep-batch
+    sleep 10
     ((index_i++))
   done
   echo "   -  -  iteration $counter complete  -  -  - "

@@ -3,7 +3,8 @@
 SCRIPT_PATH=/xch/scripts
 
 # Start Slurm
-slurmctld -c
+LOG_FILE="/xch/logs/slurm/SlurmctldLogFile.$(date +%F.%H%M%S)"
+slurmctld -c -L $LOG_FILE
 
 # Start LDMS
 source $SCRIPT_PATH/ldms/setup.sh
