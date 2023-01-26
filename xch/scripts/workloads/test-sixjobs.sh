@@ -8,27 +8,27 @@ CYCLES=${2:-2}
 N_JOBS=${3:-2}
 
 job1() {
-  sbatch -N 1 --time=50 /xch/scripts/jobs/uni-batch 512 3 100
+  sbatch --job-name=job1 -N 1 --time=50 /xch/scripts/jobs/uni-batch 512 3 100
 }
 
 job2() {
-  sbatch -N 1 --time=40 /xch/scripts/jobs/uni-batch 512 2 300
+  sbatch --job-name=job2 -N 1 --time=40 /xch/scripts/jobs/uni-batch 512 2 300
 }
 
 job3() {
-  sbatch -N 1 --time=20 /xch/scripts/jobs/uni-batch 512 1 200
+  sbatch --job-name=job3 -N 1 --time=20 /xch/scripts/jobs/uni-batch 512 1 200
 }
 
 job4() {
-  sbatch -N 1 --time=20 /xch/scripts/jobs/uni-batch 512 1 400
+  sbatch --job-name=job4 -N 1 --time=20 /xch/scripts/jobs/uni-batch 512 1 400
 }
 
 job5() {
-  sbatch -N 1 --time=30 /xch/scripts/jobs/uni-batch 512 1 800
+  sbatch --job-name=job5 -N 1 --time=30 /xch/scripts/jobs/uni-batch 512 1 800
 }
 
 job6() {
-  sbatch -N 1 --time=40 /xch/scripts/jobs/sleep-batch
+  sbatch --job-name=job6 -N 1 --time=40 /xch/scripts/jobs/sleep-batch
 }
 
 dispatch() {
