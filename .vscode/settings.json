@@ -4,5 +4,66 @@
       "title": "Slurm logs",
       "pattern": "/home/alex/vc/vvlt/xch/logs/slurm/*"
     }
-  ]
+  ],
+  "runTerminalCommand.commands": [
+        {
+          "command": "ls -lh {resource}",
+          "name": "ls",
+          "auto": true
+        },
+        {
+            "command": "gzip {resource}",
+            "name": "gzip",
+            "preserve": false,
+            "auto": true
+        }
+    ],
+    "files.associations": {
+      "array": "cpp",
+      "atomic": "cpp",
+      "*.tcc": "cpp",
+      "cctype": "cpp",
+      "cinttypes": "cpp",
+      "clocale": "cpp",
+      "cmath": "cpp",
+      "csignal": "cpp",
+      "cstdarg": "cpp",
+      "cstddef": "cpp",
+      "cstdint": "cpp",
+      "cstdio": "cpp",
+      "cstdlib": "cpp",
+      "cstring": "cpp",
+      "ctime": "cpp",
+      "cwchar": "cpp",
+      "cwctype": "cpp",
+      "deque": "cpp",
+      "unordered_map": "cpp",
+      "vector": "cpp",
+      "exception": "cpp",
+      "algorithm": "cpp",
+      "functional": "cpp",
+      "iterator": "cpp",
+      "memory": "cpp",
+      "memory_resource": "cpp",
+      "optional": "cpp",
+      "string": "cpp",
+      "string_view": "cpp",
+      "system_error": "cpp",
+      "tuple": "cpp",
+      "type_traits": "cpp",
+      "utility": "cpp",
+      "fstream": "cpp",
+      "initializer_list": "cpp",
+      "iomanip": "cpp",
+      "iosfwd": "cpp",
+      "iostream": "cpp",
+      "istream": "cpp",
+      "limits": "cpp",
+      "new": "cpp",
+      "ostream": "cpp",
+      "sstream": "cpp",
+      "stdexcept": "cpp",
+      "streambuf": "cpp",
+      "typeinfo": "cpp"
+    }
 }
