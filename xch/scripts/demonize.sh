@@ -15,9 +15,11 @@ then
 	fi
 fi
 
-"$@" &>${LOG_PATH} &
-disown
+setsid "$@" &>${LOG_PATH} & disown
 PID=$!
+
+ps -Fjp $PID
 
 printf '%d\n' "$!" >$PID_PATH
 echo "Started $1 (PID $PID in $PID_PATH) with output to ${LOG_PATH}"
+jobs

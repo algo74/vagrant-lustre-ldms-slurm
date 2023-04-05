@@ -5,5 +5,5 @@ PID=$(<${PID_PATH})
 
 echo "PID: ${PID}"
 
-kill -- -$(ps -o pgid= -p $PID | tr -d ' ')
+kill -- -$(ps -o pgid= -p $PID | tr -d ' ') || kill $PID
 rm $PID_PATH

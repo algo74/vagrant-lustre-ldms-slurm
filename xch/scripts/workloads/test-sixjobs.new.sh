@@ -102,5 +102,4 @@ runtime=$((end-start))
 
 echo "jobs completed in $runtime"
 
-files=$(seq -f "/xch/logs/jobs/slurm-%g.out" ${FIRST_JOB_ID} ${LAST_JOB_ID})
-grep -n 'error' $files
+grep -n 'error' /xch/logs/jobs/slurm-{${FIRST_JOB_ID}..${LAST_JOB_ID}}.out
