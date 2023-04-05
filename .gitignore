@@ -6,8 +6,8 @@
 
 xch/results/*
 xch/py-sim-serv/*
-# xch/HLMS23
-# xch/base_exp
+xch/HLMS23
+xch/base_exp
 
 /basenode/basenode
 /basenode/basenode.old
