@@ -173,14 +173,12 @@ This command is better run in a separate terminal as the script doesn’t exit w
 
 `py-sim-serv` contains an older version (`pysimserv`) for Python 2 and a newer vesrion (`pysimserv3`) for Python 3. We now use `pysimserv3`.
 
-The database for the MiddleMan services is located in `/LDMS_data/SOS/results` on cl0.
+The database for the MiddleMan services is located in `/LDMS_data/SOS/py-sim-serv` on cl0.
 
-###Reseting the MiddleMan database (on cl0 ssh) 
+### Reseting the MiddleMan database (on cl0 ssh) 
 
 ```
-[vagrant@cl0 ~]$ sudo rm -rf /LDMS_data/SOS/results/summary_vid_par_idx.OBJ 
-[vagrant@cl0 ~]$ sudo rm -rf /LDMS_data/SOS/results/summary_vid_par_idx.PG 
-[vagrant@cl0 ~]$ sudo rm -rf /LDMS_data/SOS/results/summary 
+[vagrant@cl0 ~]$ sudo /xch/scripts/su_clean_mdman.sh 
 ```
 
 
