@@ -1,0 +1,25 @@
+#!/bin/sh
+# This job wrtites segments of 1M blocks and waits rangomly before and after
+# usage: $0 <segments-in-block> <block-size-MB> <repeat> <extra-sleep-time> <flags>
+
+SEGMENTS=${1:-1} # segments in block
+BLOCK_SIZE=${2:-1} # block size in MB
+REPEAT=${3:-1} # repeat
+TOTAL=${4:-0} # delay
+FLAGS=${5:-"direct,sync"} # flags
+FRONT=$((TOTAL == 0 ? 0 : RANDOM % TOTAL))
+END=$((TOTAL - FRONT))
+ls /lustre/all/
+echo "sleeping $FRONT seconds"
+sleep $FRONT
+counter=1
+while [ $counter -le ${REPEAT} ] 
+do
+  echo $counter
+  dd if=/dev/zero of=/lustre/all/test_$HOSTNAME bs=${BLOCK_SIZE}M count=${SEGMENTS} oflag=${FLAGS}
+  ((counter++))
+done
+echo "sleeping $END seconds"
+sleep $END
+echo All done
+

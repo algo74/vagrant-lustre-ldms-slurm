@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-PID_PATH=/var/run/pid/mdman.pid
+PID_FILE=/var/run/pid/mdman.pid
 if [[ ! -f "$PID_FILE" ]]
 then
   echo "No PID file found at $PID_FILE"

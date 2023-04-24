@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-PID_PATH=/var/run/pid/canary.pid
+PID_FILE=/var/run/pid/canary.pid
 if [[ ! -f "$PID_FILE" ]]
 then
   echo "No PID file found at $PID_FILE"

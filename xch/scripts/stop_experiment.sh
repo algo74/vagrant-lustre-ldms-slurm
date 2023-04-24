@@ -1,6 +1,6 @@
 #!/bin/bash
 # set -e
-PID_PATH=/xch/logs/experiment.pid
+PID_FILE=/xch/logs/experiment.pid
 PID=$(<${PID_PATH})
 if [[ ! -f "$PID_FILE" ]]
 then
