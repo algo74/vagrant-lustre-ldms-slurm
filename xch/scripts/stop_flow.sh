@@ -6,6 +6,7 @@ then
   echo "No PID file found at $PID_FILE"
 else
   PID=$(sudo cat $PID_FILE)
+  echo "Killing flow with PID $PID"
   ps -Fjs $PID
   sudo kill -- -$PID
   # kill -- -$(ps -o pgid= -p $PID | tr -d ' ') || kill $PID

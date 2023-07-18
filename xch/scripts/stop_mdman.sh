@@ -7,10 +7,10 @@ then
   exit 0
 fi
 # PID=$(sudo cat $PID_FILE)
-PID=$(<${PID_PATH})
+PID=$(<${PID_FILE})
 
 echo "PID: ${PID}"
 ps -Fjs $PID
 
 sudo kill -- -$(ps -o pgid= -p $PID | tr -d ' ')
-sudo rm $PID_PATH
+sudo rm $PID_FILE
