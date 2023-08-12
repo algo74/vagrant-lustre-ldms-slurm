@@ -49,7 +49,7 @@ SCRIPT
 
 
 ## Lustre settings
-  
+
 # disable IPv6 on Linux
 $linux_disable_ipv6 = <<SCRIPT
 echo linux_disable_ipv6
@@ -176,7 +176,7 @@ SCRIPT
 $etc_modprobe_d_lnet = <<SCRIPT
 echo etc_modprobe_d_lnet
 set -xe
-echo "options lnet networks=tcp0(eth1)" >> /etc/modprobe.d/lnet.conf
+echo "options lnet networks=tcp0(eth1)" > /etc/modprobe.d/lnet.conf
 SCRIPT
 
 # lustre mounts

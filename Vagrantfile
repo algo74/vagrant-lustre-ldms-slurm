@@ -17,13 +17,14 @@ Vagrant.configure(2) do |config|
        m.vm.box_version = "0.0.2"
       # installing lustre kernel removes virtualbox guest additions
       m.vm.synced_folder ".", "/vagrant", disabled: true
+      m.vm.synced_folder "xch", "/xch", type: "rsync", rsync__exclude: [".git/", "logs/", "results/"]
     end
   end
   # mds01
   config.vm.define "mds01" do |mds01|
     mds01.vm.network "private_network", ip: "10.0.4.6"
     mds01.vm.provider "virtualbox" do |v|
-      v.memory = 2048  
+      v.memory = 2048
       v.cpus = 1
     end
     mds01.vm.provider "virtualbox" do |vb|
@@ -37,13 +38,14 @@ Vagrant.configure(2) do |config|
         vb.customize ["modifyhd", "mdt01.vdi", "--type", "shareable"]
       end
       vb.customize ["storageattach", :id, "--storagectl", $IDE, "--port", 1, "--device", 0, "--type", "hdd", "--medium", "mdt01.vdi"]
+      vb.customize ['modifyvm', :id, '--natnet1', "10.0.46.0/24"]
     end
   end
   # oss01
   config.vm.define "oss01" do |oss01|
     oss01.vm.network "private_network", ip: "10.0.4.8"
     oss01.vm.provider "virtualbox" do |v|
-      v.memory = 2048  
+      v.memory = 2048
       v.cpus = 1
     end
     oss01.vm.provider "virtualbox" do |vb|
@@ -52,6 +54,7 @@ Vagrant.configure(2) do |config|
         vb.customize ["modifyhd", "ost01.vdi", "--type", "shareable"]
       end
       vb.customize ["storageattach", :id, "--storagectl", $IDE, "--port", 1, "--device", 0, "--type", "hdd", "--medium", "ost01.vdi"]
+      vb.customize ['modifyvm', :id, '--natnet1', "10.0.48.0/24"]
     end
   end
   # oss02
@@ -67,9 +70,10 @@ Vagrant.configure(2) do |config|
         vb.customize ["modifyhd", "ost02.vdi", "--type", "shareable"]
       end
       vb.customize ["storageattach", :id, "--storagectl", $IDE, "--port", 1, "--device", 0, "--type", "hdd", "--medium", "ost02.vdi"]
+      vb.customize ['modifyvm', :id, '--natnet1', "10.0.49.0/24"]
     end
   end
-  
+
 
 
   ["mds01", "oss01", "oss02"].each do |name|
@@ -80,7 +84,7 @@ Vagrant.configure(2) do |config|
       #  s.reset = true
       #end
       # Make "slurm" user with same UID on all machines (may be not needed on Lustre servers)
-      m.vm.provision :shell, name: "useradd slurm", :inline => "useradd -u 1001 slurm" 
+      m.vm.provision :shell, name: "useradd slurm", :inline => "useradd -u 1001 slurm"
       m.vm.provision :shell, name: "hostname", :inline => "hostname #{name}", run: "always"
       m.vm.provision :shell, name: "etc_hosts", :inline => $etc_hosts
       m.vm.provision :shell, name: "yum_problem_making_ssl_connection", :inline => $yum_problem_making_ssl_connection
@@ -128,7 +132,7 @@ Vagrant.configure(2) do |config|
     mds01.vm.provision :shell, name: "mkdir -p /lustre/mdt01", :inline => "mkdir -p /lustre/mdt01"
     mds01.vm.provision :shell, name: "mount /lustre/mdt01", :inline => "mount -t lustre /dev/sdc /lustre/mdt01", run: "always"
   end
-  
+
   config.vm.define "oss01" do |oss01|
     oss01.vm.provision :shell, name: "hostname", :inline => "hostname oss01", run: "always"
     # configure lustre object storage targets
@@ -150,10 +154,14 @@ Vagrant.configure(2) do |config|
   # client client
   (0..8).each do |c_idx|
     config.vm.define "cl#{c_idx}" do |client|
+      client.vm.provider "virtualbox" do |vb|
+        # vb.customize ['modifyvm', :id, '--macaddress1', '08002700005#{c_idx}']
+	      vb.customize ['modifyvm', :id, '--natnet1', "10.0.5#{c_idx}.0/24"]
+      end
       client.vm.box = "%s/%s" % [cur_dir,"basenode"]
       client.vm.box_url = "%s/basenode/%s" % [cur_dir,"basenode"]
       client.vm.synced_folder "xch", "/xch"
-      
+
       client.vm.synced_folder ".", "/vagrant", disabled: true
 
       client.vm.network "private_network", ip: "10.0.4.5#{c_idx}"
@@ -167,6 +175,7 @@ Vagrant.configure(2) do |config|
 #      client.vm.provision :shell, :inline => $yum_problem_making_ssl_connection
       client.vm.provision :shell, :inline => $systemctl_stop_firewalld, run: "always"
       client.vm.provision :shell, :inline => $setenforce_0, run: "always"
+      client.vm.provision :shell, name: "etc_modprobe_d_lnet", :inline => $etc_modprobe_d_lnet
       client.vm.provision :shell, name: "modprobe lnet", :inline => "modprobe lnet", run: "always"
       client.vm.provision :shell, name: "lctl network up", :inline => "lctl network up", run: "always"
       client.vm.provision :shell, name: "mount /lustre", :inline => "mount -t lustre -o defaults,_netdev,user_xattr mds01@tcp0:/testfs /lustre", run: "always"

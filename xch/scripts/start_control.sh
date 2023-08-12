@@ -10,3 +10,7 @@ slurmctld -c -L $LOG_FILE
 source $SCRIPT_PATH/ldms/setup.sh
 sh $SCRIPT_PATH/ldms/start-simple-agg.sh
 # sh $SCRIPT_PATH/check_lustre.sh
+
+# prepare directories needed by workload jobs
+sudo mkdir -p /lustre/all
+sudo chmod 777 /lustre/all
