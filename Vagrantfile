@@ -17,7 +17,7 @@ Vagrant.configure(2) do |config|
        m.vm.box_version = "0.0.2"
       # installing lustre kernel removes virtualbox guest additions
       m.vm.synced_folder ".", "/vagrant", disabled: true
-      m.vm.synced_folder "xch", "/xch", type: "rsync", rsync__exclude: [".git/", "logs/", "results/"]
+      m.vm.synced_folder "xch/scripts", "/xch/scripts", type: "rsync", rsync__exclude: ".git/"
     end
   end
   # mds01
