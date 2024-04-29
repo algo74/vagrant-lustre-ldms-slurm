@@ -8,6 +8,7 @@ slurmctld -c -L $LOG_FILE
 
 # Start LDMS
 source $SCRIPT_PATH/ldms/setup.sh
+sh $SCRIPT_PATH/ldms/start_fd_sampler.sh
 sh $SCRIPT_PATH/ldms/start-simple-agg.sh
 # sh $SCRIPT_PATH/check_lustre.sh
 
