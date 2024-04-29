@@ -1,6 +1,8 @@
 #!/bin/bash
 
+SCRIPT_DIR=/xch/scripts
 PID_FILE=/var/run/pid/flow.pid
+
 if [[ ! -f "$PID_FILE" ]]
 then
   echo "No PID file found at $PID_FILE"
@@ -13,6 +15,6 @@ else
   sudo rm $PID_FILE
 fi
 
-/xch/scripts/stop_canary.sh
+${SCRIPT_DIR}/stop_canary.sh
 
-/xch/scripts/stop_mdman.sh
+${SCRIPT_DIR}/stop_mdman.sh
