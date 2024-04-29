@@ -1,22 +1,29 @@
 #!/bin/sh
-# This job wrtites segments of 1M blocks and waits rangomly before and after
+# This job wrtites segments of custom size blocks and waits rangomly before and after
 # usage: $0 <segments-in-block> <block-size-MB> <repeat> <extra-sleep-time> <flags>
+# see default parameters in code
 
 SEGMENTS=${1:-1} # segments in block
 BLOCK_SIZE=${2:-1} # block size in MB
-REPEAT=${3:-1} # repeat
-TOTAL=${4:-0} # delay
+REPEAT=${3:-1} # number of repetitions of writing the file of size SEGMENTS*BLOCK_SIZE
+TOTAL=${4:-0} # total extra sleep time
 FLAGS=${5:-"direct,sync"} # flags
+
+DEST_DIR=/lustre/all
+DEST=${DEST_DIR}/test_$HOSTNAME
+
 FRONT=$((TOTAL == 0 ? 0 : RANDOM % TOTAL))
 END=$((TOTAL - FRONT))
-ls /lustre/all/
+
+
+ls ${DEST_DIR} || mkdir -p ${DEST_DIR} || echo "Cannot create missing ${DEST_DIR}" && exit 1
 echo "sleeping $FRONT seconds"
 sleep $FRONT
 counter=1
-while [ $counter -le ${REPEAT} ] 
+while [ $counter -le ${REPEAT} ]
 do
   echo $counter
-  dd if=/dev/zero of=/lustre/all/test_$HOSTNAME bs=${BLOCK_SIZE}M count=${SEGMENTS} oflag=${FLAGS}
+  dd if=/dev/zero of=${DEST} bs=${BLOCK_SIZE}M count=${SEGMENTS} oflag=${FLAGS}
   ((counter++))
 done
 echo "sleeping $END seconds"
