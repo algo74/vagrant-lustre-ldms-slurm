@@ -118,6 +118,7 @@ Vagrant.configure(2) do |config|
       m.vm.provision :shell, name: "lctl network up", :inline => "lctl network up", run: "always"
 #      m.vm.provision :shell, name: "chkconfig lustre on", :inline => "chkconfig lustre on"
 #      m.vm.provision :shell, name: "", :inline => "chkconfig iptables off"
+      m.vm.provision :shell, name: "install ldms", :inline => "/xch/scripts/install/build_ldms_on_lustre_server.sh"
     end
   end
 
@@ -147,6 +148,12 @@ Vagrant.configure(2) do |config|
     oss02.vm.provision :shell, :inline => "mkfs.lustre --backfstype=ldiskfs --reformat --fsname=testfs --ost --index=1 --mgsnode=mds01@tcp0 /dev/sdb"
     oss02.vm.provision :shell, name: "mkdir -p /lustre/oss02", :inline => "mkdir -p /lustre/oss02"
     oss02.vm.provision :shell, name: "mount /lustre/oss02", :inline => "mount -t lustre /dev/sdb /lustre/oss02", run: "always"
+  end
+
+  ["mds01", "oss01", "oss02"].each do |name|
+    config.vm.define name do |m|
+      m.vm.provision :shell, :path => "xch/scripts/start_server_ldms.sh", run: "always"
+    end
   end
 
 
