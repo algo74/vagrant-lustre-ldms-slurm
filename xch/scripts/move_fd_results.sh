@@ -12,5 +12,5 @@ if [[ ! -d ${LAST_EXPERIMENT} ]]; then
 fi
 # move FD aggregator results to the results folder
 mkdir -p ${LAST_EXPERIMENT}/fd_csv
-mv ${FD_AGG_DIR}/fd_csv/*.csv ${LAST_EXPERIMENT}/fd_csv
+mv ${FD_AGG_DIR}/fd_csv/* ${LAST_EXPERIMENT}/fd_csv
 rm -f ${LAST_EXPERIMENT_FILE}
