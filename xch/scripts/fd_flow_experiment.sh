@@ -45,4 +45,4 @@ sleep 10
 
 # Experiment
 echo "$0" "$@" >"$OUT_FOLDER/experiment_command_line.txt"
-/xch/scripts/demonize.sh /var/run/pid/flow.pid "$OUT_FOLDER/experiment.log" "$@"
+/xch/scripts/demonize.sh /var/run/pid/flow.pid "$OUT_FOLDER/experiment.log" /xch/scripts/run_and_fd_stop_flow.sh "$@"
