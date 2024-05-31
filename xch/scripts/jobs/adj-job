@@ -16,7 +16,8 @@ FRONT=$((TOTAL == 0 ? 0 : RANDOM % TOTAL))
 END=$((TOTAL - FRONT))
 
 
-ls ${DEST_DIR} || mkdir -p ${DEST_DIR} || echo "Cannot create missing ${DEST_DIR}" && exit 1
+# ls ${DEST_DIR} || mkdir -p ${DEST_DIR} || echo "Cannot create missing ${DEST_DIR}" && exit 1
+ls ${DEST_DIR}
 echo "sleeping $FRONT seconds"
 sleep $FRONT
 counter=1

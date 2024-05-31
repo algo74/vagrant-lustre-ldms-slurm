@@ -17,23 +17,23 @@ submit_job() {
 }
 
 job1() {
-  submit_job --job-name=job1 -N 1 --time=50 /xch/scripts/jobs/uni-batch 512 3 100
+  submit_job --job-name=job1 -N 1 --time=50 /xch/scripts/jobs/adj-batch 32 32 8 0
 }
 
 job2() {
-  submit_job --job-name=job2 -N 1 --time=40 /xch/scripts/jobs/uni-batch 512 2 300
+  submit_job --job-name=job2 -N 1 --time=40 /xch/scripts/jobs/adj-batch 32 32 8 100
 }
 
 job3() {
-  submit_job --job-name=job3 -N 1 --time=20 /xch/scripts/jobs/uni-batch 512 1 200
+  submit_job --job-name=job3 -N 1 --time=20 /xch/scripts/jobs/adj-batch 32 32 4 100
 }
 
 job4() {
-  submit_job --job-name=job4 -N 1 --time=20 /xch/scripts/jobs/uni-batch 512 1 400
+  submit_job --job-name=job4 -N 1 --time=20 /xch/scripts/jobs/adj-batch 32 32 4 200
 }
 
 job5() {
-  submit_job --job-name=job5 -N 1 --time=30 /xch/scripts/jobs/uni-batch 512 1 800
+  submit_job --job-name=job5 -N 1 --time=30 /xch/scripts/jobs/adj-batch 32 32 4 400
 }
 
 job6() {
@@ -42,7 +42,7 @@ job6() {
 
 dispatch() {
   index_i=1
-  while [ $index_i -le $N_JOBS ] 
+  while [ $index_i -le $N_JOBS ]
   do
     $@
     sleep 10
@@ -51,7 +51,7 @@ dispatch() {
 }
 
 counter=1
-while [ $counter -le $PRE ] 
+while [ $counter -le $PRE ]
 do
   job1
   source $DIR/slurm-wait-till-done.sh
@@ -78,7 +78,7 @@ echo " =  =  =   =   =   =  scheduling jobs"
 start=`date +%s`
 
 counter=1
-while [ $counter -le $CYCLES ] 
+while [ $counter -le $CYCLES ]
 do
   dispatch job1
   dispatch job2
@@ -102,4 +102,5 @@ runtime=$((end-start))
 
 echo "jobs completed in $runtime"
 
-grep -n 'error' /xch/logs/jobs/slurm-{${FIRST_JOB_ID}..${LAST_JOB_ID}}.out
+files=$(seq -f "/xch/logs/jobs/slurm-%g.out" ${FIRST_JOB_ID} ${LAST_JOB_ID})
+grep -n 'error' $files
