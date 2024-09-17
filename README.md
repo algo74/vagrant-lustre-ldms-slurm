@@ -13,9 +13,9 @@ The control and compute nodes contain LDMS (with SOS and NumSOS) and the custom 
 
 A directory `xch` is mounted inside the nodes. The “MiddleMan Service” is located there (in directory `py-sim-serv`), as a git submodule. Most of the configuration files, job scripts, etc. are in `xch/scripts` directory. The scripts that run the tests are in the directory `xch/scripts/workloads`. See more details below.
 
-To change Slurm, `Vagrantfile` of the “basenode” can be changed, or (to save time) Slurm can be recompiled inside the basenode VM and the basenode box re-created. After that the control and compute nodes must be recreated. The process is described below in more details.  
+To change Slurm, `Vagrantfile` of the “basenode” can be changed, or (to save time) Slurm can be recompiled inside the basenode VM and the basenode box re-created. After that the control and compute nodes must be recreated. The process is described below in more details.
 
-Recompiling LDMS also require change of the basenode, but changing the configuration of samplers and aggregators can be done in `xch/scripts/ldms`. 
+Recompiling LDMS also require change of the basenode, but changing the configuration of samplers and aggregators can be done in `xch/scripts/ldms`.
 
 
 ---------------------------------------
@@ -23,13 +23,13 @@ Setting up this repository from scratch
 ---------------------------------------
 
 ```
-sudo apt install virtualbox 
-curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add - 
-sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" 
-sudo apt-get update && sudo apt-get install vagrant 
-sudo apt install git 
+sudo apt install virtualbox
+curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+sudo apt-get update && sudo apt-get install vagrant
+sudo apt install git
 vagrant plugin install vagrant_reboot_linux
-git clone --recurse-submodules https://<token>@github.com/algo74/vagrant-lustre-ldms-slurm 
+git clone --recurse-submodules https://<token>@github.com/algo74/vagrant-lustre-ldms-slurm
 ```
 
 Note than not all the steps above may be needed if, for example, git is already installed.
@@ -68,7 +68,7 @@ or with the script
 ```
 ./reload_lustre.sh
 ```
->  Sometimes the Luster system does not start properly (or does not operate for some other reasons). 
+>  Sometimes the Luster system does not start properly (or does not operate for some other reasons).
 > The sub-cluster can be restarted then using the same command as above
 
 ## Control and compute nodes
@@ -89,10 +89,10 @@ After the basenode is created, create other nodes as usuall:
 # creating control node
 vagrant up cl0
 # creating all 8 compute nodes
-vagrant up /cl[1-8]/ 
+vagrant up /cl[1-8]/
 ```
 
-However, nodes needs to be restarted after they were created to make Lustre work. 
+However, nodes needs to be restarted after they were created to make Lustre work.
 It can be done with the help of `up_machine.sh` script, for instance:
 ```bash
 ./up_machine cl{0-8}
@@ -108,20 +108,20 @@ The operation of Lustre file system can be checked at any time using script `xch
 Example of running the script from the host machine:
 
 ```
-vagrant ssh -c /xch/scripts/check_lustre.sh cl0 
-./ssh_clx.sh 8  /xch/scripts/check_lustre.sh 
+vagrant ssh -c /xch/scripts/check_lustre.sh cl0
+./ssh_clx.sh 8  /xch/scripts/check_lustre.sh
 ```
 
-The second command uses the script that allows running same command on several compute nodes (in this case on nodes cl1-cl8). The range is set by the first argument, the rest will be passed as the command to the node (the script may have to be changed if it doesn’t work as expected with more than two arguments). 
+The second command uses the script that allows running same command on several compute nodes (in this case on nodes cl1-cl8). The range is set by the first argument, the rest will be passed as the command to the node (the script may have to be changed if it doesn’t work as expected with more than two arguments).
 
-If the name of the Lustre file system does not appear after “checking lustre” (or if it appears empty when it is not), something is not right. Try restarting the node (or restart the Lustre nodes if it is not showing on all nodes and/or restarting nodes doesn’t help). 
+If the name of the Lustre file system does not appear after “checking lustre” (or if it appears empty when it is not), something is not right. Try restarting the node (or restart the Lustre nodes if it is not showing on all nodes and/or restarting nodes doesn’t help).
 
 
 ----------------
 Running test
 ----------------
 
-The following is a typical workflow, assuming that all nodes are started and the Lustre file system has been tested. 
+The following is a typical workflow, assuming that all nodes are started and the Lustre file system has been tested.
 
 * Start MiddleMan (pysimserv) in a terminal on cl0 ssh
 
@@ -175,10 +175,10 @@ This command is better run in a separate terminal as the script doesn’t exit w
 
 The database for the MiddleMan services is located in `/LDMS_data/SOS/py-sim-serv` on cl0.
 
-### Reseting the MiddleMan database (on cl0 ssh) 
+### Reseting the MiddleMan database (on cl0 ssh)
 
 ```
-[vagrant@cl0 ~]$ sudo /xch/scripts/su_clean_mdman.sh 
+[vagrant@cl0 ~]$ sudo /xch/scripts/su_clean_mdman.sh
 ```
 
 
@@ -198,26 +198,26 @@ A general workflow is as follows
 
 Please see the source code of the workload scripts for details
 
-### Stopping jobs 
+### Stopping jobs
 
-When an experiment needs to be canceled, we can delete jobs that are already submitted to Slurm but not completed using the following two commands in the following order. 
+When an experiment needs to be canceled, we can delete jobs that are already submitted to Slurm but not completed using the following two commands in the following order.
 
 ```
-[vagrant@cl0 ~]$ scancel --state=PENDING 
-[vagrant@cl0 ~]$ scancel --state=RUNNING 
+[vagrant@cl0 ~]$ scancel --state=PENDING
+[vagrant@cl0 ~]$ scancel --state=RUNNING
 ```
 
-### Checking errors during execution of jobs 
+### Checking errors during execution of jobs
 
-Often, operations on Lustre results in errors. The following command allows an easy check of all jobs logs for the errors 
+Often, operations on Lustre results in errors. The following command allows an easy check of all jobs logs for the errors
 ```
-[vagrant@cl0 ~]$ grep error /xch/logs/jobs/*.out 
+[vagrant@cl0 ~]$ grep error /xch/logs/jobs/*.out
 ```
 
 > This is an example of running the command in cl0. It can be similarly executed on the host machine.
 
 
-## Cleaning logs and data 
+## Cleaning logs and data
 
 LDMS is running constantly on the control node (cl0).
 The node has a small disk that could be easily filled up with LDMS data.
@@ -225,19 +225,19 @@ Therefore, the node should be halted when not in use and cleaned periodically.
 Logs are stored outside the VMs, but cleaning them periodically is also a good idea to simplify search for new output and to preserve disk space.
 
 
-### Cleaning LDMS data 
+### Cleaning LDMS data
 
 ```
-vagrant ssh -c /xch/scripts/clear_node.sh cl0 
+vagrant ssh -c /xch/scripts/clear_node.sh cl0
 ```
 
 This command will stop Slurm and LDMS. They will resume on the next node startup. The node could be halted if not needed or, if needed right away, restarted like this:
 ```
-vagrant reload cl0 
+vagrant reload cl0
 ```
 
-> Note that this does not delete the state of “MiddleMan Services”. 
-> See above how to delete it. 
+> Note that this does not delete the state of “MiddleMan Services”.
+> See above how to delete it.
 
 
 ### Cleaning the logs
@@ -257,8 +257,8 @@ vagrant halt
 To stop Lustre only, use
 ```
 halt_lustre.sh
-``` 
-or 
+```
+or
 ```
 vagrant halt mds01 mds02 oss01 oss02
 ```
@@ -295,7 +295,7 @@ Structure of control/compute nodes
 |     +--slurm-ldms (our Slurm git repository)
 |
 +--usr/local/ovis   (location of LDMS/SOS/NumSOS install)
-|  
+|
 +--var/spool/slurmd (a directory for Slurm)
 |
 +--lustre           (mount point for Lustre file system)
@@ -359,17 +359,17 @@ Example of modifying Slurm:
 vagrant up
 vagrant ssh
 [vagrant@basenode ~]$ cd /source/slurm/slurm-ldms
-[vagrant@basenode ~]$ git pull
+[vagrant@basenode slurm-ldms]$ git pull
 ```
 > Alternatively, checkout another branch or commit
 ```
-[vagrant@basenode ~]$ ./configure --enable-debug  --enable-multiple-slurmd
+[vagrant@basenode slurm-ldms]$ ./configure --enable-debug  --enable-multiple-slurmd
 ```
 > configuring is probably needed only when new files were added
 ```
-[vagrant@basenode ~]$ make 
-[vagrant@basenode ~]$ sudo make install 
-[vagrant@basenode ~]$ exit
+[vagrant@basenode slurm-ldms]$ make
+[vagrant@basenode slurm-ldms]$ sudo make install
+[vagrant@basenode slurm-ldms]$ exit
 ```
 
 
@@ -377,27 +377,27 @@ vagrant ssh
 
 When finished, run the following commands on the host machine
 ```
-vagrant box remove basenode 
+vagrant box remove basenode
 ```
-> This removes the previous outdated box from vagrant 
+> This removes the previous outdated box from vagrant
 
 ```
-mv basenode <basenode-backup-name> 
+mv basenode <basenode-backup-name>
 ```
-> This optional command saves the previous box in case the new one doesn’t work as expected. 
+> This optional command saves the previous box in case the new one doesn’t work as expected.
 
 ```
-vagrant package --output basenode 
+vagrant package --output basenode
 ```
 > This adds the modified box (based on the current state of the virtual machine in this folder) to vagrant.
 
-See vagrant documentation for details 
+See vagrant documentation for details
 
 The script `basenode/build_basenode` performs these steps, for convenience.
 
 ## In parent directory (`cd ..`)
 
-### Recreate compute nodes 
+### Recreate compute nodes
 
 _Note that this will remove LDMS and MiddleMan data stored on cl0_
 
@@ -410,7 +410,7 @@ vagrant destroy -f /cl[0-8]/
 
 ## Commiting the change to the repository
 
-Edit `basenode/build_scripts/install_slurm.sh` to reflect the new branch or commit id of Slurm. 
+Edit `basenode/build_scripts/install_slurm.sh` to reflect the new branch or commit id of Slurm.
 Similarly, for LDMS/SOS/NumSOS, edit `basenode/build_scripts/install_ldms.sh`.
 
 
@@ -418,14 +418,14 @@ Similarly, for LDMS/SOS/NumSOS, edit `basenode/build_scripts/install_ldms.sh`.
 Lustre CLI examples
 -------------------
 
-Create new directory: 
- 
+Create new directory:
+
     sudo mkdir /lustre/all
     sudo chmod 777 /lustre/all
     sudo lfs setstripe -c 2 /lustre/all
 
 Check if Lustre is mounted:
-    
+
     ls /proc/fs/lustre/llite
 
 Make/remove a file
@@ -448,7 +448,7 @@ Description
 Installs and configures Lustre 2.8.0 server and clients.
 The configuration is a simplified setup inspired by
 http://www.dell.com/downloads/global/solutions/200-DELL-CAMBRIDGE-SOLUTIONS-WHITEPAPER-20072010b.pdf
-     
+
                 -----------------------------
                 |       MGS/MDS Module      |
                 |                           |
@@ -464,15 +464,15 @@ http://www.dell.com/downloads/global/solutions/200-DELL-CAMBRIDGE-SOLUTIONS-WHIT
                 | |  Active |   | Standby | |
                 | -----------   ----------- |
                 -----------------------------
-                              | 
+                              |
     -----------               |
     |         |               |
     | Clients |               |                -----------------------------
-    |         | -------------------------------|        OSS Module         | 
+    |         | -------------------------------|        OSS Module         |
     -----------            NETWORK             |                           |
                                                |        -----------        |
                                                |OST01 <-|         |->      |
-                                               |  |   <-| Shared  |-> OST02| 
+                                               |  |   <-| Shared  |-> OST02|
                                                |  |     | Storage |     |  |
                                                |  |     |         |     |  |
                                                |  |     -----------     |  |

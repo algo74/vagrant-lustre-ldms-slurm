@@ -20,7 +20,7 @@ port: 9999
 production: true
 zero_current_utilization: true
 FACTORS:
-  lustre: 0.0000666666666667
+  lustre: 0.0000317891439
   # lustre: 0
   timelimit: 0.016666666666666666
   user: 1

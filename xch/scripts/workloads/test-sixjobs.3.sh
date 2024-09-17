@@ -25,15 +25,15 @@ job2() {
 }
 
 job3() {
-  submit_job --job-name=job3 -N 1 --time=20 /xch/scripts/jobs/adj-batch 32 32 6 150
+  submit_job --job-name=job3 -N 1 --time=20 /xch/scripts/jobs/adj-batch 32 32 6 200
 }
 
 job4() {
-  submit_job --job-name=job4 -N 1 --time=20 /xch/scripts/jobs/adj-batch 32 32 4 200
+  submit_job --job-name=job4 -N 1 --time=20 /xch/scripts/jobs/adj-batch 32 32 4 300
 }
 
 job5() {
-  submit_job --job-name=job5 -N 1 --time=30 /xch/scripts/jobs/adj-batch 32 32 2 250
+  submit_job --job-name=job5 -N 1 --time=30 /xch/scripts/jobs/adj-batch 32 32 2 400
 }
 
 job6() {
@@ -101,6 +101,7 @@ end=`date +%s`
 runtime=$((end-start))
 
 echo "jobs completed in $runtime"
-
+echo " ------ errors ------"
 files=$(seq -f "/xch/logs/jobs/slurm-%g.out" ${FIRST_JOB_ID} ${LAST_JOB_ID})
 grep -n 'error' $files
+echo " -- end errors -----"

@@ -5,5 +5,6 @@
   },
   "lustre_log_path": "/xch/logs/slurm/lustre_log.csv",
   "track_nodes": true,
-  "backfill_type": "AWARE"
+  "backfill_type": "TWO_GROUP",
+  "two_group_fraction": 0
 }
