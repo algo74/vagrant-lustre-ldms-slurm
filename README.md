@@ -1,6 +1,8 @@
 *************************************
-#    Addition by Alex G
+#    Slurm-LDMS system on a cluster of virtual machines
 *************************************
+
+Adapted from https://github.com/marcindulak/vagrant-lustre-tutorial-centos6
 
 -----------
 Description
@@ -438,7 +440,7 @@ Check disk usage
      lfs df -h
 
 *************************************
-#    Original info
+#    Original info (from https://github.com/marcindulak/vagrant-lustre-tutorial-centos6)
 *************************************
 
 -----------
