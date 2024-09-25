@@ -1,9 +1,8 @@
-*************************************
-#    Slurm-LDMS system on a cluster of virtual machines
-*************************************
+Slurm-LDMS system on a cluster of virtual machines
+==================================================
 
-Adapted from https://github.com/marcindulak/vagrant-lustre-tutorial-centos6.
-The original README.md from https://github.com/marcindulak/vagrant-lustre-tutorial-centos6 is renamed to [original.README.md](original.README.md).
+> Adapted from https://github.com/marcindulak/vagrant-lustre-tutorial-centos6.
+> The original README.md from https://github.com/marcindulak/vagrant-lustre-tutorial-centos6 is renamed to [original.README.md](original.README.md).
 
 -----------
 Description
