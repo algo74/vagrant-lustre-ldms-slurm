@@ -12,9 +12,13 @@ Description
 This repository contains Vagrant scripts and other scripts and configuration files
 needed to install a cluster with a Lustre file system, a control node, and several compute nodes.
 
+![VC Design](vc.png "Virtual cluster design")
+
 The control and compute nodes contain LDMS (with SOS and NumSOS) and the custom version of Slurm.
 
-A directory `xch` is mounted inside the nodes. The “MiddleMan Service” is located there (in directory `py-sim-serv`), as a git submodule. Most of the configuration files, job scripts, etc. are in `xch/scripts` directory. The scripts that run the tests are in the directory `xch/scripts/workloads`. See more details below.
+A directory `xch` is mounted inside the nodes. The “Analytical Services” ("MiddleMan") is located there (in directory `py-sim-serv`), as a git submodule. Most of the configuration files, job scripts, etc. are in `xch/scripts` directory. The scripts that run the tests are in the directory `xch/scripts/workloads`. See more details below.
+
+![Slurm-LDMS Design](Slurm-LDMS_design.png "Slurm-LDMS project overall design")
 
 To change Slurm, `Vagrantfile` of the “basenode” can be changed, or (to save time) Slurm can be recompiled inside the basenode VM and the basenode box re-created. After that the control and compute nodes must be recreated. The process is described below in more details.
 

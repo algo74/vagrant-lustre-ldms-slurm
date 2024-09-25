@@ -19,6 +19,14 @@
         }
     ],
     "files.associations": {
+      "*.rasi": "css",
+      "*.bbmodel": "json",
+      "*.sublime-snippet": "xml",
+      "*.hbs": "html",
+      "*.ejs": "html",
+      "*.Xresources": "xdefaults",
+      "i3/config": "i3",
+      "i3/*.conf": "i3",
       "array": "cpp",
       "atomic": "cpp",
       "*.tcc": "cpp",
@@ -64,6 +72,16 @@
       "sstream": "cpp",
       "stdexcept": "cpp",
       "streambuf": "cpp",
-      "typeinfo": "cpp"
-    }
+      "typeinfo": "cpp",
+      "lustre_client.h": "c",
+      "ldms.h": "c",
+      "ldmsd.h": "c",
+      "sampler_base.h": "c",
+      "jobid_helper.h": "c",
+      "queue.h": "c",
+      "types.h": "c",
+      "unistd.h": "c",
+      "lustre_fulldump_lnet_peers.h": "c"
+    },
+    "files.trimTrailingWhitespace": true
 }
